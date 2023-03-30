@@ -284,11 +284,15 @@ print(fish_list)
 
 1. Filtrer la liste pour ne récupérer que les poissons mâles
 
+   La fonction `filter` nous retourne un itérateur qu'on ne peut utiliser tel quel. Il est donc nécessaire d'utiliser la fonction `list` afin de consommer la liste
+
    ```ipython
    list(filter(lambda x : x[2] == 'Male', fish_list))
    ```
 
 2. Afficher que les noms de poissons
+
+   Solution pas très optimale, car on va consommer toutes les données pour fournir uniquement les données de la première colonne
 
    ```ipython
    In [40]: fish_list_columns = list(zip(*fish_list)) # une liste pour les noms, une pour l'espèce, ...
@@ -316,6 +320,24 @@ print(fish_list)
     'Catfish')
    ```
 
+   La solution suivante est donc meilleure car on ne consomme que les données dont on a besoin :
+
+   ```ipython
+    In [13]: list(map(lambda fish: fish[0], fish_list))
+    Out[13]:
+    ['Bass',
+     'Salmon',
+     'Sardine',
+     'Haddock',
+     'Bass',
+     'Catfish',
+     'Trout',
+     'Haddock',
+     'Haddock',
+     'Catfish',
+      ...
+   ```
+
 3. Établir une liste (set) de toutes les espèces présentes dans l'aquarium
 
    ```ipython
@@ -335,6 +357,23 @@ print(fish_list)
     'Thunnus albacares'}
    ```
 
+   Ici on pourrait réutiliser le `map` de la question 2, afin d'être plus optimal :
+
+   ```ipython
+   In [19]: set(map(lambda fish : fish[1], fish_list))
+   Out[19]:
+   {'Gadus morhua',
+   'Hippoglossus hippoglossus',
+   'Ictalurus punctatus',
+   'Melanogrammus aeglefinus',
+   'Micropterus salmoides',
+   'Oncorhynchus mykiss',
+   'Salmo salar',
+   'Sardina pilchardus',
+   'Scomber scombrus',
+   'Thunnus albacares'}
+   ```
+
 4. Créer une fonction `fish(name, group, genre, status)` qui affiche :
    `Poisson {name} de l'espèce {group} est {"vivant" if status else "mort"}`
 
@@ -344,65 +383,82 @@ print(fish_list)
        ...:
    ```
 
-   Attention il ne faut pas mettre de double guillemets, mais des simples guillemets
+   Attention il ne faut pas mettre de double guillemets, mais des simples guillemets pour 'vivant' et 'mort'
+
+   Autre posssibilité pour l'opérateur ternaire :
+
+   ```ipython
+    In [29]: answer = True
+
+    In [30]: ['Non', 'Oui'][answer]
+    Out[30]: 'Oui'
+   ```
 
 5. Executer la fonction pour chaque élément de la liste (vous utiliserez `*`)
 
-```ipython
-In [63]: for x in fish_list :
-    ...:     fish(*x)
-    ...:
-Poisson Tuna de l'espèce Oncorhynchus mykiss est mort
-Poisson Cod de l'espèce Ictalurus punctatus est mort
-Poisson Salmon de l'espèce Thunnus albacares est vivant
-Poisson Cod de l'espèce Micropterus salmoides est mort
-Poisson Catfish de l'espèce Micropterus salmoides est mort
-Poisson Cod de l'espèce Melanogrammus aeglefinus est vivant
-Poisson Haddock de l'espèce Micropterus salmoides est vivant
-Poisson Trout de l'espèce Salmo salar est vivant
-Poisson Bass de l'espèce Thunnus albacares est mort
-Poisson Salmon de l'espèce Sardina pilchardus est mort
-Poisson Salmon de l'espèce Micropterus salmoides est mort
-Poisson Tuna de l'espèce Melanogrammus aeglefinus est mort
-Poisson Salmon de l'espèce Sardina pilchardus est vivant
-Poisson Bass de l'espèce Gadus morhua est vivant
-...
-```
+   ```ipython
+   In [63]: for x in fish_list :
+       ...:     fish(*x)
+       ...:
+   Poisson Tuna de l'espèce Oncorhynchus mykiss est mort
+   Poisson Cod de l'espèce Ictalurus punctatus est mort
+   Poisson Salmon de l'espèce Thunnus albacares est vivant
+   Poisson Cod de l'espèce Micropterus salmoides est mort
+   Poisson Catfish de l'espèce Micropterus salmoides est mort
+   Poisson Cod de l'espèce Melanogrammus aeglefinus est vivant
+   Poisson Haddock de l'espèce Micropterus salmoides est vivant
+   Poisson Trout de l'espèce Salmo salar est vivant
+   Poisson Bass de l'espèce Thunnus albacares est mort
+   Poisson Salmon de l'espèce Sardina pilchardus est mort
+   Poisson Salmon de l'espèce Micropterus salmoides est mort
+   Poisson Tuna de l'espèce Melanogrammus aeglefinus est mort
+   Poisson Salmon de l'espèce Sardina pilchardus est vivant
+   Poisson Bass de l'espèce Gadus morhua est vivant
+   ...
+   ```
 
-Mais pourquoi ça ça ne marche pas ? :
+   Mais pourquoi ça ça ne marche pas ? Parce que la fonction fish print déjà
 
-```ipython
-In [69]: print([fish(*x) for x in fish_list])
-Poisson Tuna de l'espèce Oncorhynchus mykiss est mort
-Poisson Cod de l'espèce Ictalurus punctatus est mort
-Poisson Salmon de l'espèce Thunnus albacares est vivant
-...
-Poisson Salmon de l'espèce Micropterus salmoides est mort
-Poisson Sardine de l'espèce Melanogrammus aeglefinus est mort
-Poisson Catfish de l'espèce Gadus morhua est vivant
-[None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
-```
+   ```ipython
+    In [80]: [fish(*x) for x in fish_list]
+    Poisson Bass de l'espèce Thunnus albacares est vivant
+    Poisson Salmon de l'espèce Salmo salar est mort
+    Poisson Sardine de l'espèce Thunnus albacares est vivant
+    ...
+     None,
+     None,
+     None,
+     None,
+     None,
+     None,
+     None,
+     None,
+     None,
+     None,
+     None,
+   ```
 
 6. Comment savoir en une ligne si il y a des poissons mort dans l'aquarium
 
-Pourquoi les 2 marchent ?
+   Pourquoi les 2 marchent ?
 
-```ipython
-In [79]: any(filter(lambda x : x[3]==False, fish_list))
-Out[79]: True
-```
-
-```ipython
-In [80]: any(list(filter(lambda x : x[3]==False, fish_list)))
-Out[80]: True
-```
+   ```ipython
+   In [79]: any(filter(lambda x : x[3]==False, fish_list))
+   Out[79]: True
+   ```
 
 7. Est-ce qu'il y a un "Scalaire" (nom de l'espèce) dans votre aquarium ?
 
-```ipython
-In [90]: any(list(filter(lambda x : x[1]=='Gadus morhua', fish_list)))
-Out[90]: True
+   ```ipython
+    In [32]: any(filter(lambda x : x[1]=='Scalaire', fish_list))
+    Out[32]: False
 
-In [91]: any(list(filter(lambda x : x[1]=='Scalaire', fish_list)))
-Out[91]: False
-```
+    In [33]: any(filter(lambda x : x[1]=='Gadus morhua', fish_list))
+    Out[33]: True
+   ```
+
+# Bonne explications de la différence entre `map` et `filter`
+
+[StackOverflow 1ère réponse](https://stackoverflow.com/a/47578636/18016683)
+
+# Numpy
