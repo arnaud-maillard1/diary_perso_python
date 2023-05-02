@@ -154,6 +154,8 @@ Ici on surcharge `__radd__` pour que l'opérateur `+` soit associatif. Afin de s
 
 ## Listes et compréhensions
 
+Les compréhensions permettent d'alléger le code en une ligne. Comme elles sont écrites en une seule ligne, elles peuvent permettre au processeur de les optimiser en répartissant le travail sur plusieurs coeurs par exemple.
+
 ### Exemple 1
 
 ```ipython
