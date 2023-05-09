@@ -1,0 +1,26 @@
+<html>
+
+<head>
+<h1>Bienvenue chez {{marketName}}</h1>
+</head>
+
+<body>
+
+Voici les articles disponibles dans notre magasin : <br>
+
+
+<ul>
+{% for article in articles %}
+    <li>{{article.name}}
+        <ul>
+        {% for variante in article.variantes%} 
+            <li>{{variante.name}}, prix : {{variante.price}}</li>
+        {% endfor %}
+        </ul>
+    </li>
+{% endfor %}
+</ul>
+
+</body>
+</html>
+
