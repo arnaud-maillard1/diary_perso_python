@@ -1,0 +1,2344 @@
+\documentclass[11pt]{article}
+
+    \usepackage[breakable]{tcolorbox}
+    \usepackage{parskip} % Stop auto-indenting (to mimic markdown behaviour)
+    
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % Maintain compatibility with old templates. Remove in nbconvert 6.0
+    \let\Oldincludegraphics\includegraphics
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionFormat{nocaption}{}
+    \captionsetup{format=nocaption,aboveskip=0pt,belowskip=0pt}
+
+    \usepackage{float}
+    \floatplacement{figure}{H} % forces figures to be placed at the correct location
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+
+    \usepackage{iftex}
+    \ifPDFTeX
+        \usepackage[T1]{fontenc}
+        \IfFileExists{alphabeta.sty}{
+              \usepackage{alphabeta}
+          }{
+              \usepackage[mathletters]{ucs}
+              \usepackage[utf8x]{inputenc}
+          }
+    \else
+        \usepackage{fontspec}
+        \usepackage{unicode-math}
+    \fi
+
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics
+                         % to support a larger range
+    \makeatletter % fix for old versions of grffile with XeLaTeX
+    \@ifpackagelater{grffile}{2019/11/01}
+    {
+      % Do nothing on new versions
+    }
+    {
+      \def\Gread@@xetex#1{%
+        \IfFileExists{"\Gin@base".bb}%
+        {\Gread@eps{\Gin@base.bb}}%
+        {\Gread@@xetex@aux#1}%
+      }
+    }
+    \makeatother
+    \usepackage[Export]{adjustbox} % Used to constrain images to a maximum size
+    \adjustboxset{max size={0.9\linewidth}{0.9\paperheight}}
+
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    % The default LaTeX title has an obnoxious amount of whitespace. By default,
+    % titling removes some of it. It also provides customization options.
+    \usepackage{titling}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage{array}     % table support for pandoc >= 2.11.3
+    \usepackage{calc}      % table minipage width calculation for pandoc >= 2.11.1
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    \usepackage{mathrsfs}
+    
+
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+    \definecolor{ansi-default-inverse-fg}{HTML}{FFFFFF}
+    \definecolor{ansi-default-inverse-bg}{HTML}{000000}
+
+    % common color for the border for error outputs.
+    \definecolor{outerrorbackground}{HTML}{FFDFDF}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+
+
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatibility definitions
+    \def\gt{>}
+    \def\lt{<}
+    \let\Oldtex\TeX
+    \let\Oldlatex\LaTeX
+    \renewcommand{\TeX}{\textrm{\Oldtex}}
+    \renewcommand{\LaTeX}{\textrm{\Oldlatex}}
+    % Document parameters
+    % Document title
+    \title{resume\_semestre}
+    
+    
+    
+    
+    
+% Pygments definitions
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\@namedef{PY@tok@w}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\@namedef{PY@tok@c}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cp}{\def\PY@tc##1{\textcolor[rgb]{0.61,0.40,0.00}{##1}}}
+\@namedef{PY@tok@k}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kt}{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\@namedef{PY@tok@o}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ow}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@nb}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nf}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@ne}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.80,0.25,0.22}{##1}}}
+\@namedef{PY@tok@nv}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@no}{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\@namedef{PY@tok@nl}{\def\PY@tc##1{\textcolor[rgb]{0.46,0.46,0.00}{##1}}}
+\@namedef{PY@tok@ni}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@na}{\def\PY@tc##1{\textcolor[rgb]{0.41,0.47,0.13}{##1}}}
+\@namedef{PY@tok@nt}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nd}{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@s}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sd}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@si}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@se}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.36,0.12}{##1}}}
+\@namedef{PY@tok@sr}{\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@ss}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sx}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@m}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@gh}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gu}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gd}{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\@namedef{PY@tok@gi}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.52,0.00}{##1}}}
+\@namedef{PY@tok@gr}{\def\PY@tc##1{\textcolor[rgb]{0.89,0.00,0.00}{##1}}}
+\@namedef{PY@tok@ge}{\let\PY@it=\textit}
+\@namedef{PY@tok@gs}{\let\PY@bf=\textbf}
+\@namedef{PY@tok@gp}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@go}{\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@gt}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\@namedef{PY@tok@err}{\def\PY@bc##1{{\setlength{\fboxsep}{\string -\fboxrule}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}}
+\@namedef{PY@tok@kc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kd}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kr}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@bp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@fm}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@vc}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vg}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vi}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vm}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sa}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sb}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sc}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@dl}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s2}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sh}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s1}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@mb}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mf}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mh}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mi}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@il}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mo}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ch}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cm}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cpf}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@c1}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cs}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % For linebreaks inside Verbatim environment from package fancyvrb.
+    \makeatletter
+        \newbox\Wrappedcontinuationbox
+        \newbox\Wrappedvisiblespacebox
+        \newcommand*\Wrappedvisiblespace {\textcolor{red}{\textvisiblespace}}
+        \newcommand*\Wrappedcontinuationsymbol {\textcolor{red}{\llap{\tiny$\m@th\hookrightarrow$}}}
+        \newcommand*\Wrappedcontinuationindent {3ex }
+        \newcommand*\Wrappedafterbreak {\kern\Wrappedcontinuationindent\copy\Wrappedcontinuationbox}
+        % Take advantage of the already applied Pygments mark-up to insert
+        % potential linebreaks for TeX processing.
+        %        {, <, #, %, $, ' and ": go to next line.
+        %        _, }, ^, &, >, - and ~: stay at end of broken line.
+        % Use of \textquotesingle for straight quote.
+        \newcommand*\Wrappedbreaksatspecials {%
+            \def\PYGZus{\discretionary{\char`\_}{\Wrappedafterbreak}{\char`\_}}%
+            \def\PYGZob{\discretionary{}{\Wrappedafterbreak\char`\{}{\char`\{}}%
+            \def\PYGZcb{\discretionary{\char`\}}{\Wrappedafterbreak}{\char`\}}}%
+            \def\PYGZca{\discretionary{\char`\^}{\Wrappedafterbreak}{\char`\^}}%
+            \def\PYGZam{\discretionary{\char`\&}{\Wrappedafterbreak}{\char`\&}}%
+            \def\PYGZlt{\discretionary{}{\Wrappedafterbreak\char`\<}{\char`\<}}%
+            \def\PYGZgt{\discretionary{\char`\>}{\Wrappedafterbreak}{\char`\>}}%
+            \def\PYGZsh{\discretionary{}{\Wrappedafterbreak\char`\#}{\char`\#}}%
+            \def\PYGZpc{\discretionary{}{\Wrappedafterbreak\char`\%}{\char`\%}}%
+            \def\PYGZdl{\discretionary{}{\Wrappedafterbreak\char`\$}{\char`\$}}%
+            \def\PYGZhy{\discretionary{\char`\-}{\Wrappedafterbreak}{\char`\-}}%
+            \def\PYGZsq{\discretionary{}{\Wrappedafterbreak\textquotesingle}{\textquotesingle}}%
+            \def\PYGZdq{\discretionary{}{\Wrappedafterbreak\char`\"}{\char`\"}}%
+            \def\PYGZti{\discretionary{\char`\~}{\Wrappedafterbreak}{\char`\~}}%
+        }
+        % Some characters . , ; ? ! / are not pygmentized.
+        % This macro makes them "active" and they will insert potential linebreaks
+        \newcommand*\Wrappedbreaksatpunct {%
+            \lccode`\~`\.\lowercase{\def~}{\discretionary{\hbox{\char`\.}}{\Wrappedafterbreak}{\hbox{\char`\.}}}%
+            \lccode`\~`\,\lowercase{\def~}{\discretionary{\hbox{\char`\,}}{\Wrappedafterbreak}{\hbox{\char`\,}}}%
+            \lccode`\~`\;\lowercase{\def~}{\discretionary{\hbox{\char`\;}}{\Wrappedafterbreak}{\hbox{\char`\;}}}%
+            \lccode`\~`\:\lowercase{\def~}{\discretionary{\hbox{\char`\:}}{\Wrappedafterbreak}{\hbox{\char`\:}}}%
+            \lccode`\~`\?\lowercase{\def~}{\discretionary{\hbox{\char`\?}}{\Wrappedafterbreak}{\hbox{\char`\?}}}%
+            \lccode`\~`\!\lowercase{\def~}{\discretionary{\hbox{\char`\!}}{\Wrappedafterbreak}{\hbox{\char`\!}}}%
+            \lccode`\~`\/\lowercase{\def~}{\discretionary{\hbox{\char`\/}}{\Wrappedafterbreak}{\hbox{\char`\/}}}%
+            \catcode`\.\active
+            \catcode`\,\active
+            \catcode`\;\active
+            \catcode`\:\active
+            \catcode`\?\active
+            \catcode`\!\active
+            \catcode`\/\active
+            \lccode`\~`\~
+        }
+    \makeatother
+
+    \let\OriginalVerbatim=\Verbatim
+    \makeatletter
+    \renewcommand{\Verbatim}[1][1]{%
+        %\parskip\z@skip
+        \sbox\Wrappedcontinuationbox {\Wrappedcontinuationsymbol}%
+        \sbox\Wrappedvisiblespacebox {\FV@SetupFont\Wrappedvisiblespace}%
+        \def\FancyVerbFormatLine ##1{\hsize\linewidth
+            \vtop{\raggedright\hyphenpenalty\z@\exhyphenpenalty\z@
+                \doublehyphendemerits\z@\finalhyphendemerits\z@
+                \strut ##1\strut}%
+        }%
+        % If the linebreak is at a space, the latter will be displayed as visible
+        % space at end of first line, and a continuation symbol starts next line.
+        % Stretch/shrink are however usually zero for typewriter font.
+        \def\FV@Space {%
+            \nobreak\hskip\z@ plus\fontdimen3\font minus\fontdimen4\font
+            \discretionary{\copy\Wrappedvisiblespacebox}{\Wrappedafterbreak}
+            {\kern\fontdimen2\font}%
+        }%
+
+        % Allow breaks at special characters using \PYG... macros.
+        \Wrappedbreaksatspecials
+        % Breaks at punctuation characters . , ; ? ! and / need catcode=\active
+        \OriginalVerbatim[#1,codes*=\Wrappedbreaksatpunct]%
+    }
+    \makeatother
+
+    % Exact colors from NB
+    \definecolor{incolor}{HTML}{303F9F}
+    \definecolor{outcolor}{HTML}{D84315}
+    \definecolor{cellborder}{HTML}{CFCFCF}
+    \definecolor{cellbackground}{HTML}{F7F7F7}
+
+    % prompt
+    \makeatletter
+    \newcommand{\boxspacing}{\kern\kvtcb@left@rule\kern\kvtcb@boxsep}
+    \makeatother
+    \newcommand{\prompt}[4]{
+        {\ttfamily\llap{{\color{#2}[#3]:\hspace{3pt}#4}}\vspace{-\baselineskip}}
+    }
+    
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+\begin{document}
+    
+    \maketitle
+    
+    
+
+    
+    \hypertarget{ruxe9sumuxe9-du-cours-de-uxe0-choix-de-python}{%
+\section{Résumé du cours de à choix de
+python}\label{ruxe9sumuxe9-du-cours-de-uxe0-choix-de-python}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{1}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+\PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
+\PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k}{as} \PY{n+nn}{pd}
+\PY{k+kn}{import} \PY{n+nn}{pint} 
+\end{Verbatim}
+\end{tcolorbox}
+
+    \hypertarget{structure-de-donnuxe9es}{%
+\section{Structure de données}\label{structure-de-donnuxe9es}}
+
+\hypertarget{les-scalaires}{%
+\subsection{Les scalaires}\label{les-scalaires}}
+
+Les différentes strucutres de données scalaires sont les suivantes :
+
+\begin{itemize}
+\tightlist
+\item
+  Integers
+\item
+  Floats
+\item
+  Complex
+\item
+  Strings
+\item
+  Boolean
+\item
+  None
+\end{itemize}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{2}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{i} \PY{o}{=} \PY{n+nb}{int}\PY{p}{(}\PY{l+m+mi}{42}\PY{p}{)} \PY{c+c1}{\PYZsh{} Integers}
+\PY{n+nb}{print}\PY{p}{(}\PY{n+nb}{type}\PY{p}{(}\PY{n}{i}\PY{p}{)}\PY{p}{)}
+\PY{n}{f} \PY{o}{=} \PY{n+nb}{float}\PY{p}{(}\PY{l+m+mf}{42.0}\PY{p}{)} \PY{c+c1}{\PYZsh{} Floating point numbers}
+\PY{n+nb}{print}\PY{p}{(}\PY{n+nb}{type}\PY{p}{(}\PY{n}{f}\PY{p}{)}\PY{p}{)}
+\PY{n}{c} \PY{o}{=} \PY{l+m+mf}{42.0} \PY{o}{+} \PY{l+m+mf}{0.0}\PY{n}{j} \PY{c+c1}{\PYZsh{} Complex numbers}
+\PY{n+nb}{print}\PY{p}{(}\PY{n+nb}{type}\PY{p}{(}\PY{n}{c}\PY{p}{)}\PY{p}{)}
+\PY{n}{b} \PY{o}{=} \PY{k+kc}{True} \PY{c+c1}{\PYZsh{} Booleans}
+\PY{n+nb}{print}\PY{p}{(}\PY{n+nb}{type}\PY{p}{(}\PY{n}{b}\PY{p}{)}\PY{p}{)}
+\PY{n}{s} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{42}\PY{l+s+s2}{\PYZdq{}} \PY{c+c1}{\PYZsh{} Strings}
+\PY{n+nb}{print}\PY{p}{(}\PY{n+nb}{type}\PY{p}{(}\PY{n}{s}\PY{p}{)}\PY{p}{)}
+\PY{n}{n} \PY{o}{=} \PY{k+kc}{None} \PY{c+c1}{\PYZsh{} NoneType}
+\PY{n+nb}{print}\PY{p}{(}\PY{n+nb}{type}\PY{p}{(}\PY{n}{n}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+<class 'int'>
+<class 'float'>
+<class 'complex'>
+<class 'bool'>
+<class 'str'>
+<class 'NoneType'>
+    \end{Verbatim}
+
+    \hypertarget{conteneurs}{%
+\subsection{Conteneurs}\label{conteneurs}}
+
+Il y a différents types de conteneurs en python : - Listes : utilisent
+le symbole
+\texttt{{[}{]}\ -\ Tuples\ :\ utilisent\ le\ symbole}()\texttt{-\ Dictionnaires\ :\ utilisent\ le\ symbole}\texttt{-\ Set\ :\ utilisent\ le\ symbole}`
+
+\hypertarget{listes}{%
+\subsubsection{Listes}\label{listes}}
+
+Les principales propriétés des listes sont les suivantes : - Non
+hashable - Possède un itérateur
+
+\textbf{Non hashable} : on ne peut générer une valeur unique à partir de
+la liste. On ne peut donc pas utiliser une liste comme clé dans un
+dictionnaire.
+
+\textbf{Possède un itérateur} : on peut parcourir la liste avec une
+boucle for.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{3}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{l} \PY{o}{=} \PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{3}\PY{p}{,} \PY{l+m+mi}{4}\PY{p}{,} \PY{l+m+mi}{5}\PY{p}{]} \PY{c+c1}{\PYZsh{} Liste}
+
+\PY{c+c1}{\PYZsh{} Non\PYZhy{}hashable}
+\PY{k}{try} \PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{n+nb}{hash}\PY{p}{(}\PY{n}{l}\PY{p}{)}\PY{p}{)}
+\PY{k}{except} \PY{n+ne}{TypeError} \PY{k}{as} \PY{n}{e}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{n}{e}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Possède un itérateur}
+\PY{n}{iter\PYZus{}l} \PY{o}{=} \PY{n+nb}{iter}\PY{p}{(}\PY{n}{l}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{Possède un itérateur :}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n+nb}{next}\PY{p}{(}\PY{n}{iter\PYZus{}l}\PY{p}{)}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n+nb}{next}\PY{p}{(}\PY{n}{iter\PYZus{}l}\PY{p}{)}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{Boucle for :}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n}{l}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{n}{i}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Next ne marche pas si l\PYZsq{}itérateur n\PYZsq{}est pas stocké dans une variable}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{Next ne marche pas si l}\PY{l+s+se}{\PYZbs{}\PYZsq{}}\PY{l+s+s1}{itérateur n}\PY{l+s+se}{\PYZbs{}\PYZsq{}}\PY{l+s+s1}{est pas stocké dans une variable :}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n+nb}{next}\PY{p}{(}\PY{n+nb}{iter}\PY{p}{(}\PY{n}{l}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n+nb}{next}\PY{p}{(}\PY{n+nb}{iter}\PY{p}{(}\PY{n}{l}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+unhashable type: 'list'
+
+Possède un itérateur :
+1
+2
+
+Boucle for :
+1
+2
+3
+4
+5
+
+Next ne marche pas si l'itérateur n'est pas stocké dans une variable :
+1
+1
+    \end{Verbatim}
+
+    Compréhension de liste :
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{4}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{s} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{1 2 3 4 5}\PY{l+s+s2}{\PYZdq{}} \PY{c+c1}{\PYZsh{} String}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{String :}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{s}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Séparation :}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{s\PYZus{}sep} \PY{o}{=} \PY{p}{[}\PY{n}{s}\PY{o}{.}\PY{n}{strip}\PY{p}{(}\PY{p}{)} \PY{k}{for} \PY{n}{s} \PY{o+ow}{in} \PY{n}{s}\PY{o}{.}\PY{n}{split}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{ }\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{]}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{s\PYZus{}sep}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Transformation en int :}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{s\PYZus{}int} \PY{o}{=} \PY{p}{[}\PY{n+nb}{int}\PY{p}{(}\PY{n}{s}\PY{p}{)} \PY{k}{for} \PY{n}{s} \PY{o+ow}{in} \PY{n}{s\PYZus{}sep}\PY{p}{]}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{s\PYZus{}int}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Ajout de 10 :}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{s1} \PY{o}{=} \PY{p}{[}\PY{n}{s\PYZus{}int}\PY{o}{+} \PY{l+m+mi}{10} \PY{k}{for} \PY{n}{s\PYZus{}int} \PY{o+ow}{in} \PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{,}\PY{l+m+mi}{4}\PY{p}{]}\PY{p}{]}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{s1}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+String :
+1 2 3 4 5
+Séparation :
+['1', '2', '3', '4', '5']
+Transformation en int :
+[1, 2, 3, 4, 5]
+Ajout de 10 :
+[11, 12, 13, 14]
+    \end{Verbatim}
+
+    \hypertarget{tuples}{%
+\subsubsection{Tuples}\label{tuples}}
+
+Les principales propriétés des tuples sont les suivantes : - Hashable -
+Possède un itérateur - Non modifiable
+
+\textbf{Hashable} : on peut générer une valeur unique à partir du tuple.
+On peut donc utiliser un tuple comme clé dans un dictionnaire.
+
+\textbf{Possède un itérateur} : on peut parcourir le tuple avec une
+boucle for.
+
+\textbf{Non modifiable} : on ne peut pas modifier un tuple. On peut
+seulement le parcourir.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{5}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Hashable}
+\PY{n}{t} \PY{o}{=} \PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{3}\PY{p}{,} \PY{l+m+mi}{4}\PY{p}{,} \PY{l+m+mi}{5}\PY{p}{)} \PY{c+c1}{\PYZsh{} Tuple}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{Hashable :}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{k}{try} \PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{n+nb}{hash}\PY{p}{(}\PY{n}{t}\PY{p}{)}\PY{p}{)}
+\PY{k}{except} \PY{n+ne}{TypeError} \PY{k}{as} \PY{n}{e}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{n}{e}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Possède un itérateur}
+\PY{n}{iter\PYZus{}t} \PY{o}{=} \PY{n+nb}{iter}\PY{p}{(}\PY{n}{t}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{Possède un itérateur :}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n+nb}{next}\PY{p}{(}\PY{n}{iter\PYZus{}t}\PY{p}{)}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n+nb}{next}\PY{p}{(}\PY{n}{iter\PYZus{}t}\PY{p}{)}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{Boucle for :}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n}{t}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{n}{i}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Non modifiable}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{Non modifiable :}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{k}{try} \PY{p}{:}
+    \PY{n}{t}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{=} \PY{l+m+mi}{42}
+\PY{k}{except} \PY{n+ne}{TypeError} \PY{k}{as} \PY{n}{e}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{n}{e}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+Hashable :
+-5659871693760987716
+
+Possède un itérateur :
+1
+2
+
+Boucle for :
+1
+2
+3
+4
+5
+
+Non modifiable :
+'tuple' object does not support item assignment
+    \end{Verbatim}
+
+    \hypertarget{dictionnaires}{%
+\subsubsection{Dictionnaires}\label{dictionnaires}}
+
+Les principales propriétés des dictionnaires sont les suivantes : - Les
+clés doivent être hashables (donc pas de listes comme clés) - Lent à
+parcourir - Propriétés d'un dictionnaire : - .items() : retourne les
+clés et les valeurs - .values() : retourne les valeurs - .keys() :
+retourne les clés - Hash Table
+
+\textbf{Hash Table} : un dictionnaire est une table de hashage. Il
+calcule un hash code pour chaque clé.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{6}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{d} \PY{o}{=} \PY{p}{\PYZob{}}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{a}\PY{l+s+s1}{\PYZsq{}} \PY{p}{:} \PY{l+m+mi}{1}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{b}\PY{l+s+s1}{\PYZsq{}} \PY{p}{:} \PY{l+m+mi}{2}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{c}\PY{l+s+s1}{\PYZsq{}} \PY{p}{:} \PY{l+m+mi}{3}\PY{p}{\PYZcb{}} \PY{c+c1}{\PYZsh{} Dictionnaire hashable}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Dictionnaire hashable :}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{d}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Les clés dovient être hashable}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{Les clés doivent être hashable :}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{k}{try} \PY{p}{:}
+    \PY{n}{d\PYZus{}unhashable} \PY{o}{=} \PY{p}{\PYZob{}}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{3}\PY{p}{]} \PY{p}{:} \PY{l+m+mi}{1}\PY{p}{,} \PY{p}{[}\PY{l+m+mi}{4}\PY{p}{,} \PY{l+m+mi}{5}\PY{p}{,} \PY{l+m+mi}{6}\PY{p}{]} \PY{p}{:} \PY{l+m+mi}{2}\PY{p}{\PYZcb{}}
+\PY{k}{except} \PY{n+ne}{TypeError} \PY{k}{as} \PY{n}{e}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{n}{e}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Propriétés des dictionnaires}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{Propriétés des dictionnaires :}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Keys :}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{d}\PY{o}{.}\PY{n}{keys}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Values :}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{d}\PY{o}{.}\PY{n}{values}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Items :}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{d}\PY{o}{.}\PY{n}{items}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Dictionnaire hashable :
+\{'a': 1, 'b': 2, 'c': 3\}
+
+Les clés doivent être hashable :
+unhashable type: 'list'
+
+Propriétés des dictionnaires :
+Keys : dict\_keys(['a', 'b', 'c'])
+Values : dict\_values([1, 2, 3])
+Items : dict\_items([('a', 1), ('b', 2), ('c', 3)])
+    \end{Verbatim}
+
+    \hypertarget{set}{%
+\subsubsection{Set}\label{set}}
+
+Les principales propriétés des set sont les suivantes : - Un
+dictionnaire avec que des clés. - Rend les éléments uniques
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{u} \PY{o}{=} \PY{p}{\PYZob{}}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{3}\PY{p}{,} \PY{l+m+mi}{4}\PY{p}{,} \PY{l+m+mi}{5}\PY{p}{\PYZcb{}} \PY{c+c1}{\PYZsh{} Set}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{Type :}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n+nb}{type}\PY{p}{(}\PY{n}{u}\PY{p}{)}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Rend les éléments uniques}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{Rend les éléments uniques :}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{u} \PY{o}{=} \PY{p}{\PYZob{}}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{,}\PY{l+m+mi}{4}\PY{p}{,}\PY{l+m+mi}{4}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{\PYZcb{}}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{u}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+Type : <class 'set'>
+
+Rend les éléments uniques :
+\{1, 2, 3, 4, 5\}
+    \end{Verbatim}
+
+    \hypertarget{classes}{%
+\section{Classes}\label{classes}}
+
+Python est un langage orienté objet. Il est donc possible de créer des
+classes.
+
+Voici quelques unes des méthodes \texttt{magiques} des classes python
+sont les suivanets : - \texttt{\_\_new\_\_} : qui est le constructeur de
+la classe - \texttt{\_\_init\_\_} : initialisateur de classe qui peut
+prendre des paramètres - \texttt{\_\_repr\_\_} : qui retourne une
+représentation de la classe
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{8}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{class} \PY{n+nc}{A}\PY{p}{:}
+    \PY{k}{def} \PY{n+nf+fm}{\PYZus{}\PYZus{}new\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{cls}\PY{p}{,} \PY{n}{a}\PY{p}{)}\PY{p}{:}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Constructeur}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        \PY{k}{return} \PY{n+nb}{super}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n+nf+fm}{\PYZus{}\PYZus{}new\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{cls}\PY{p}{)}
+    \PY{k}{def} \PY{n+nf+fm}{\PYZus{}\PYZus{}init\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{,} \PY{n}{a}\PY{p}{)}\PY{p}{:}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Initialisation}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{a} \PY{o}{=} \PY{n}{a}
+    \PY{k}{def} \PY{n+nf+fm}{\PYZus{}\PYZus{}repr\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{)}\PY{p}{:}
+        \PY{k}{return} \PY{n+nb}{str}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{A : }\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{n+nb}{str}\PY{p}{(}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{a}\PY{p}{)}\PY{p}{)}
+    \PY{k}{def} \PY{n+nf+fm}{\PYZus{}\PYZus{}next\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{)}\PY{p}{:}
+        \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{i} \PY{o}{+}\PY{o}{=} \PY{l+m+mi}{1}
+        \PY{k}{return} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{a}\PY{p}{[}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{i}\PY{p}{]}
+    \PY{k}{def} \PY{n+nf+fm}{\PYZus{}\PYZus{}iter\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{)}\PY{p}{:}
+        \PY{k}{return} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{a}
+    
+\PY{n}{a} \PY{o}{=} \PY{n}{A}\PY{p}{(}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{3}\PY{p}{,} \PY{l+m+mi}{4}\PY{p}{,} \PY{l+m+mi}{5}\PY{p}{]}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{n+nb}{repr}\PY{p}{(}\PY{n}{a}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Constructeur
+Initialisation
+A : [1, 2, 3, 4, 5]
+    \end{Verbatim}
+
+    \hypertarget{propriuxe9tuxe9s}{%
+\subsection{Propriétés}\label{propriuxe9tuxe9s}}
+
+Il est possible de créer des propriétés dans une classe. Pour cela, il
+faut utiliser les décorateurs \texttt{@property}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{14}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{class} \PY{n+nc}{Shape}\PY{p}{:}
+    \PY{k}{def} \PY{n+nf+fm}{\PYZus{}\PYZus{}init\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{,} \PY{n}{x}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{n}{color}\PY{p}{)}\PY{p}{:}
+        \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{x} \PY{o}{=} \PY{n}{x}
+        \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{y} \PY{o}{=} \PY{n}{y}
+        \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{\PYZus{}color} \PY{o}{=} \PY{n}{color}
+
+    \PY{k}{def} \PY{n+nf}{area}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{)}\PY{p}{:}
+        \PY{k}{return} \PY{l+m+mi}{42}
+
+    \PY{k}{def} \PY{n+nf}{move}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{,} \PY{n}{dx}\PY{p}{,} \PY{n}{dy}\PY{p}{)}\PY{p}{:}
+        \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{x} \PY{o}{+}\PY{o}{=} \PY{n}{dx}
+        \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{y} \PY{o}{+}\PY{o}{=} \PY{n}{dy}
+
+    \PY{c+c1}{\PYZsh{} On ne fait pas ça en python :}
+    \PY{k}{def} \PY{n+nf}{getColor}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{)}\PY{p}{:}
+        \PY{k}{return} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{\PYZus{}color}
+
+    \PY{c+c1}{\PYZsh{} On fait ça en python :}
+    \PY{n+nd}{@property}
+    \PY{k}{def} \PY{n+nf}{color}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{)}\PY{p}{:}
+        \PY{k}{return} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{\PYZus{}color}
+
+
+\PY{k}{class} \PY{n+nc}{Circle}\PY{p}{(}\PY{n}{Shape}\PY{p}{)}\PY{p}{:}  \PY{c+c1}{\PYZsh{} Circle hérite de Shape}
+    \PY{k}{def} \PY{n+nf+fm}{\PYZus{}\PYZus{}init\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{,} \PY{n}{radius}\PY{p}{,} \PY{n}{x}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{n}{color}\PY{p}{)}\PY{p}{:}
+        \PY{c+c1}{\PYZsh{} Appel du constructeur de Shape (parent) avec  le mot clé super()}
+        \PY{n+nb}{super}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n+nf+fm}{\PYZus{}\PYZus{}init\PYZus{}\PYZus{}}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{n}{color}\PY{p}{)}
+        \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{\PYZus{}radius} \PY{o}{=} \PY{n}{radius}
+
+    \PY{k}{def} \PY{n+nf}{\PYZus{}compute\PYZus{}area}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{)}\PY{p}{:}
+        \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{area} \PY{o}{=} \PY{l+m+mf}{3.14} \PY{o}{*} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{radius}\PY{o}{*}\PY{o}{*}\PY{l+m+mi}{2}
+
+    \PY{c+c1}{\PYZsh{} Getter de radius}
+    \PY{n+nd}{@property}
+    \PY{k}{def} \PY{n+nf}{radius}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{)}\PY{p}{:}
+        \PY{k}{return} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{\PYZus{}radius}
+
+    \PY{c+c1}{\PYZsh{} Setter de radius}
+    \PY{n+nd}{@radius}\PY{o}{.}\PY{n}{setter}
+    \PY{k}{def} \PY{n+nf}{radius}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{,} \PY{n}{value}\PY{p}{)}\PY{p}{:}
+        \PY{k}{if} \PY{n}{value} \PY{o}{\PYZlt{}} \PY{l+m+mi}{0}\PY{p}{:}
+            \PY{k}{raise} \PY{n+ne}{ValueError}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Radius cannot be negative}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+        \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{\PYZus{}radius} \PY{o}{=} \PY{n}{value}
+        \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{\PYZus{}compute\PYZus{}area}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \hypertarget{ouvrir-lire-et-fermer-des-fichiers}{%
+\section{Ouvrir, lire et fermer des
+fichiers}\label{ouvrir-lire-et-fermer-des-fichiers}}
+
+Les différentes méthodes utiles à la gestion des fichiers : -
+\texttt{open(filename,\ \textquotesingle{}r\textquotesingle{})} : ouvre
+un fichier en lecture -
+\texttt{open(filename,\ \textquotesingle{}w\textquotesingle{})} : ouvre
+un fichier en écriture - \texttt{read()} : lis tout le fichier -
+\texttt{readline()} : lis la prochaine ligne - \texttt{readlines()} :
+lis toutes les lignes - \texttt{close()} : ferme le fichier
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{9}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{fp} \PY{o}{=} \PY{n+nb}{open}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{resume\PYZus{}semestre.ipynb}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{r}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} \PY{c+c1}{\PYZsh{} \PYZsq{}w\PYZsq{}, \PYZsq{}a\PYZsq{}}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{fp}\PY{o}{.}\PY{n}{readline}\PY{p}{(}\PY{p}{)}\PY{p}{)} \PY{c+c1}{\PYZsh{} Lis la prochaine ligne}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{fp}\PY{o}{.}\PY{n}{readline}\PY{p}{(}\PY{p}{)}\PY{p}{)} \PY{c+c1}{\PYZsh{} Lis la prochaine ligne}
+
+\PY{n}{fp}\PY{o}{.}\PY{n}{close}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+\{
+
+ "cells": [
+
+    \end{Verbatim}
+
+    \hypertarget{surcharge-dopuxe9rateurs}{%
+\section{Surcharge d'opérateurs}\label{surcharge-dopuxe9rateurs}}
+
+Toutes les surcharges d'opérateurs sont disponibles dans le
+\href{https://docs.python.org/3/reference/datamodel.html\#}{data model
+python}, mais pour les opérateurs numériques, on peut se référer à la
+\href{https://docs.python.org/3/reference/datamodel.html\#emulating-numeric-types}{section
+sur les opérateurs numériques}
+
+\hypertarget{exemple-1}{%
+\subsubsection{Exemple 1}\label{exemple-1}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{1}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{class} \PY{n+nc}{Number}\PY{p}{:}
+    \PY{k}{def} \PY{n+nf+fm}{\PYZus{}\PYZus{}init\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{,} \PY{n}{number}\PY{p}{)}\PY{p}{:}
+        \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{number} \PY{o}{=} \PY{n}{number}
+    \PY{k}{def} \PY{n+nf+fm}{\PYZus{}\PYZus{}add\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{,} \PY{n}{n}\PY{p}{)} \PY{p}{:}
+        \PY{k}{return} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{number} \PY{o}{+} \PY{n}{n}
+    \PY{k}{def} \PY{n+nf+fm}{\PYZus{}\PYZus{}sub\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{,} \PY{n}{n}\PY{p}{)} \PY{p}{:}
+        \PY{k}{return} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{number} \PY{o}{\PYZhy{}} \PY{n}{n}
+    \PY{k}{def} \PY{n+nf+fm}{\PYZus{}\PYZus{}mul\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{,} \PY{n}{n}\PY{p}{)} \PY{p}{:}
+        \PY{k}{return} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{number} \PY{o}{*} \PY{n}{n}
+    \PY{k}{def} \PY{n+nf+fm}{\PYZus{}\PYZus{}floordiv\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{,} \PY{n}{n}\PY{p}{)} \PY{p}{:} \PY{c+c1}{\PYZsh{} //}
+        \PY{k}{return} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{number} \PY{o}{/} \PY{n}{n}
+    \PY{k}{def} \PY{n+nf+fm}{\PYZus{}\PYZus{}truediv\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{,} \PY{n}{n}\PY{p}{)}\PY{p}{:} \PY{c+c1}{\PYZsh{} /}
+        \PY{k}{return} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{number} \PY{o}{/} \PY{n}{n}
+
+\PY{n}{n} \PY{o}{=} \PY{n}{Number}\PY{p}{(}\PY{l+m+mi}{42}\PY{p}{)}
+
+\PY{n}{n} \PY{o}{\PYZhy{}} \PY{l+m+mi}{33}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{1}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+9
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{2}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{n}\PY{o}{*}\PY{l+m+mi}{10}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{2}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+420
+\end{Verbatim}
+\end{tcolorbox}
+        
+    Attention, ici le type retourné est un \texttt{int} et non un
+\texttt{Number}.
+
+\hypertarget{exemple-2}{%
+\subsubsection{Exemple 2}\label{exemple-2}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{6}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{class} \PY{n+nc}{Number}\PY{p}{:}
+   \PY{k}{def} \PY{n+nf+fm}{\PYZus{}\PYZus{}init\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{,} \PY{n}{number}\PY{p}{)}\PY{p}{:}
+       \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{number} \PY{o}{=} \PY{n}{number}
+   \PY{k}{def} \PY{n+nf+fm}{\PYZus{}\PYZus{}add\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{,} \PY{n}{n}\PY{p}{)} \PY{p}{:}
+       \PY{k}{return} \PY{n}{Number}\PY{p}{(}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{number} \PY{o}{+} \PY{n}{n}\PY{p}{)}
+   \PY{k}{def} \PY{n+nf+fm}{\PYZus{}\PYZus{}repr\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{)}\PY{p}{:}
+       \PY{k}{return} \PY{n+nb}{str}\PY{p}{(}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{number}\PY{p}{)}
+   
+\PY{n}{n} \PY{o}{=} \PY{n}{Number}\PY{p}{(}\PY{l+m+mi}{42}\PY{p}{)}
+\PY{n}{n}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{6}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+42
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{Number}\PY{p}{(}\PY{l+m+mi}{42}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+42
+\end{Verbatim}
+\end{tcolorbox}
+        
+    Ici, on utilise \texttt{\_\_repr\_\_} pour afficher un \texttt{Number}
+comme un \texttt{int}.
+
+\hypertarget{exemple-3}{%
+\subsubsection{Exemple 3}\label{exemple-3}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{11}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{class} \PY{n+nc}{Number}\PY{p}{:}
+    \PY{k}{def} \PY{n+nf+fm}{\PYZus{}\PYZus{}init\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{,} \PY{n}{number}\PY{p}{)}\PY{p}{:}
+        \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{number} \PY{o}{=} \PY{n}{number}
+    \PY{k}{def} \PY{n+nf+fm}{\PYZus{}\PYZus{}add\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{,} \PY{n}{n}\PY{p}{)} \PY{p}{:}
+        \PY{k}{return} \PY{n}{Number}\PY{p}{(}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{number} \PY{o}{+} \PY{n}{n}\PY{p}{)}
+    \PY{k}{def} \PY{n+nf+fm}{\PYZus{}\PYZus{}repr\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{)}\PY{p}{:}
+        \PY{k}{return} \PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Fstring : Number(}\PY{l+s+si}{\PYZob{}}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{number}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{)}\PY{l+s+s2}{\PYZdq{}}
+    
+\PY{n}{Number}\PY{p}{(}\PY{l+m+mi}{42}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{11}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Fstring : Number(42)
+\end{Verbatim}
+\end{tcolorbox}
+        
+    On utilise ici une \texttt{f-string} pour afficher un \texttt{Number}
+comme on le souhaite.
+
+\hypertarget{exemple-4}{%
+\subsubsection{Exemple 4}\label{exemple-4}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{14}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{class} \PY{n+nc}{Number}\PY{p}{:}
+    \PY{k}{def} \PY{n+nf+fm}{\PYZus{}\PYZus{}init\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{,} \PY{n}{number}\PY{p}{)}\PY{p}{:}
+        \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{number} \PY{o}{=} \PY{n}{number}
+    \PY{k}{def} \PY{n+nf+fm}{\PYZus{}\PYZus{}add\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{,} \PY{n}{n}\PY{p}{)} \PY{p}{:}
+        \PY{k}{return} \PY{n}{Number}\PY{p}{(}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{number} \PY{o}{+} \PY{n}{n}\PY{p}{)}
+    \PY{k}{def} \PY{n+nf+fm}{\PYZus{}\PYZus{}repr\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{)}\PY{p}{:}
+        \PY{k}{return} \PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Number(}\PY{l+s+si}{\PYZob{}}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{number}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{)}\PY{l+s+s2}{\PYZdq{}}
+    \PY{k}{def} \PY{n+nf+fm}{\PYZus{}\PYZus{}str\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{)} \PY{p}{:}
+        \PY{k}{return} \PY{n+nb}{str}\PY{p}{(}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{number}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{Number}\PY{p}{(}\PY{l+m+mi}{42}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+42
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{16}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{Number}\PY{p}{(}\PY{l+m+mi}{42}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{16}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Number(42)
+\end{Verbatim}
+\end{tcolorbox}
+        
+    Finalement on peut voir la différence entre \texttt{\_\_repr\_\_} et
+\texttt{\_\_str\_\_} ci-dessus.
+
+\hypertarget{exemple-5}{%
+\subsubsection{Exemple 5}\label{exemple-5}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{17}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{n} \PY{o}{+} \PY{l+m+mi}{33}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{17}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Number(75)
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{19}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{try} \PY{p}{:}
+    \PY{l+m+mi}{33} \PY{o}{+} \PY{n}{n}
+\PY{k}{except} \PY{n+ne}{TypeError} \PY{k}{as} \PY{n}{e}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{n}{e}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+unsupported operand type(s) for +: 'int' and 'Number'
+    \end{Verbatim}
+
+    \hypertarget{exemple-6}{%
+\subsubsection{Exemple 6}\label{exemple-6}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{30}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{class} \PY{n+nc}{Number}\PY{p}{:}
+    \PY{k}{def} \PY{n+nf+fm}{\PYZus{}\PYZus{}init\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{,} \PY{n}{number}\PY{p}{)}\PY{p}{:}
+        \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{number} \PY{o}{=} \PY{n}{number}
+    \PY{k}{def} \PY{n+nf+fm}{\PYZus{}\PYZus{}add\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{,} \PY{n}{n}\PY{p}{)} \PY{p}{:}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Add}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+        \PY{k}{return} \PY{n}{Number}\PY{p}{(}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{number} \PY{o}{+} \PY{n}{n}\PY{p}{)}
+    \PY{k}{def} \PY{n+nf+fm}{\PYZus{}\PYZus{}radd\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{,} \PY{n}{n}\PY{p}{)}\PY{p}{:}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Radd}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+        \PY{k}{return} \PY{n+nb+bp}{self} \PY{o}{+} \PY{n}{n} \PY{c+c1}{\PYZsh{} utilisation de la surcharge déjà faite auparavant}
+    \PY{k}{def} \PY{n+nf+fm}{\PYZus{}\PYZus{}repr\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{)}\PY{p}{:}
+        \PY{k}{return} \PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Number(}\PY{l+s+si}{\PYZob{}}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{number}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{)}\PY{l+s+s2}{\PYZdq{}}
+    \PY{k}{def} \PY{n+nf+fm}{\PYZus{}\PYZus{}str\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{)} \PY{p}{:}
+        \PY{k}{return} \PY{n+nb}{str}\PY{p}{(}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{number}\PY{p}{)}
+    
+\PY{n}{n} \PY{o}{=} \PY{n}{Number}\PY{p}{(}\PY{l+m+mi}{42}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{31}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{n} \PY{o}{+} \PY{l+m+mi}{33}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Add
+    \end{Verbatim}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{31}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Number(75)
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{32}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{l+m+mi}{33} \PY{o}{+} \PY{n}{n}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Radd
+Add
+    \end{Verbatim}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{32}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Number(75)
+\end{Verbatim}
+\end{tcolorbox}
+        
+    Ici on surcharge \texttt{\_\_radd\_\_} pour que l'opérateur \texttt{+}
+soit associatif. Afin de simplifier le code on utilise la surcharge déjà
+faite auparavant dans \texttt{\_\_radd\_\_}.
+
+    \hypertarget{opuxe9rateurs}{%
+\section{Opérateurs}\label{opuxe9rateurs}}
+
+\hypertarget{opuxe9rateurs-fonctionnels-pour-tous-les-conteneurs-de-donnuxe9es}{%
+\subsubsection{\texorpdfstring{Opérateurs fonctionnels pour
+\textbf{tous} les conteneurs de
+données}{Opérateurs fonctionnels pour tous les conteneurs de données}}\label{opuxe9rateurs-fonctionnels-pour-tous-les-conteneurs-de-donnuxe9es}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{33}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{p}{\PYZob{}}\PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{3}\PY{p}{,} \PY{l+m+mi}{4}\PY{p}{,} \PY{l+m+mi}{5}\PY{p}{\PYZcb{}} \PY{o}{\PYZhy{}} \PY{p}{\PYZob{}}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{4}\PY{p}{\PYZcb{}}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{33}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\{3, 5\}
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{36}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{p}{\PYZob{}}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{,}\PY{l+m+mi}{4}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{,}\PY{l+m+mi}{6}\PY{p}{\PYZcb{}}\PY{o}{\PYZca{}}\PY{p}{\PYZob{}}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{,}\PY{l+m+mi}{4}\PY{p}{\PYZcb{}} \PY{c+c1}{\PYZsh{} garde uniquement les éléments qui ne sont pas dans les deux sets (XOR)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{36}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\{5, 6\}
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \hypertarget{opuxe9rateur-all}{%
+\subsubsection{\texorpdfstring{Opérateur
+\texttt{all}}{Opérateur all}}\label{opuxe9rateur-all}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{38}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nb}{all}\PY{p}{(}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{,}\PY{l+m+mi}{4}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{38}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+True
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{40}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nb}{all}\PY{p}{(}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{,}\PY{l+m+mi}{4}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{40}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+False
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{46}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nb}{any}\PY{p}{(}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{46}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+False
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{48}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nb}{any}\PY{p}{(}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{48}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+True
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \hypertarget{swapper}{%
+\subsubsection{Swapper}\label{swapper}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{50}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{a} \PY{o}{=} \PY{l+m+mi}{1}
+\PY{n}{b} \PY{o}{=} \PY{l+m+mi}{2}
+
+\PY{n}{a}\PY{p}{,} \PY{n}{b} \PY{o}{=} \PY{n}{b}\PY{p}{,} \PY{n}{a}
+
+\PY{n}{a}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{50}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+2
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{51}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{b}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{51}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+1
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \hypertarget{enumerate}{%
+\subsubsection{Enumerate}\label{enumerate}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{54}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{l} \PY{o}{=} \PY{p}{[}\PY{l+m+mi}{3}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{,}\PY{l+m+mi}{6}\PY{p}{]}
+
+\PY{n+nb}{list}\PY{p}{(}\PY{n+nb}{enumerate}\PY{p}{(}\PY{n}{l}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{54}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+[(0, 3), (1, 2), (2, 5), (3, 6)]
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{56}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{l} \PY{o}{=} \PY{p}{[}\PY{l+m+mi}{3}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{,}\PY{l+m+mi}{6}\PY{p}{]}
+
+\PY{k}{for} \PY{n}{i}\PY{p}{,} \PY{n}{v} \PY{o+ow}{in} \PY{n+nb}{enumerate}\PY{p}{(}\PY{n}{l}\PY{p}{)} \PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{i=}\PY{l+s+si}{\PYZob{}}\PY{n}{i}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{, v=}\PY{l+s+si}{\PYZob{}}\PY{n}{v}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}  
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+i=0, v=3
+i=1, v=2
+i=2, v=5
+i=3, v=6
+    \end{Verbatim}
+
+    \hypertarget{zip}{%
+\subsubsection{Zip}\label{zip}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{58}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{firstnames} \PY{o}{=} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{John}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Jane}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Jack}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+\PY{n}{lastnames} \PY{o}{=} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Doe}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Doe}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Black}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+
+\PY{n+nb}{list}\PY{p}{(}\PY{n+nb}{zip}\PY{p}{(}\PY{n}{firstnames}\PY{p}{,} \PY{n}{lastnames}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{58}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+[('John', 'Doe'), ('Jane', 'Doe'), ('Jack', 'Black')]
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{59}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{ }\PY{l+s+s1}{\PYZsq{}}\PY{o}{.}\PY{n}{join}\PY{p}{(}\PY{n}{x}\PY{p}{)} \PY{k}{for} \PY{n}{x} \PY{o+ow}{in} \PY{n+nb}{list}\PY{p}{(}\PY{n+nb}{zip}\PY{p}{(}\PY{n}{firstnames}\PY{p}{,} \PY{n}{lastnames}\PY{p}{)}\PY{p}{)}\PY{p}{]}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{59}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+['John Doe', 'Jane Doe', 'Jack Black']
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \hypertarget{opuxe9rateur-de-duxe9ruxe9fuxe9rencement-et}{%
+\subsubsection{Opérateur de déréférencement * et
+**}\label{opuxe9rateur-de-duxe9ruxe9fuxe9rencement-et}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{62}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{operate}\PY{p}{(}\PY{n}{a}\PY{p}{,}\PY{n}{b}\PY{p}{,} \PY{o}{*}\PY{o}{*}\PY{n}{kwargs}\PY{p}{)}\PY{p}{:}
+    \PY{k}{if} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{add}\PY{l+s+s1}{\PYZsq{}} \PY{o+ow}{in} \PY{n}{kwargs}\PY{p}{:}
+            \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+si}{\PYZob{}}\PY{n}{a}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{+}\PY{l+s+si}{\PYZob{}}\PY{n}{b}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{=}\PY{l+s+si}{\PYZob{}}\PY{n}{a}\PY{o}{+}\PY{n}{b}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{k}{if} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sub}\PY{l+s+s1}{\PYZsq{}} \PY{o+ow}{in} \PY{n}{kwargs}\PY{p}{:}
+            \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+si}{\PYZob{}}\PY{n}{a}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZhy{}}\PY{l+s+si}{\PYZob{}}\PY{n}{b}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{=}\PY{l+s+si}{\PYZob{}}\PY{n}{a}\PY{o}{\PYZhy{}}\PY{n}{b}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{n}{operate}\PY{p}{(}\PY{l+m+mi}{23}\PY{p}{,} \PY{l+m+mi}{42}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{64}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{operate}\PY{p}{(}\PY{l+m+mi}{23}\PY{p}{,} \PY{l+m+mi}{42}\PY{p}{,} \PY{n}{add}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+23+42=65
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{65}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{operate}\PY{p}{(}\PY{l+m+mi}{23}\PY{p}{,} \PY{l+m+mi}{42}\PY{p}{,} \PY{n}{add}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{sub}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+23+42=65
+23-42=-19
+    \end{Verbatim}
+
+    L'opérateur \texttt{*} permet de déréférencer une liste ou un tuple. Il
+permet de passer les éléments d'une liste ou d'un tuple comme paramètres
+d'une fonction.
+
+Pour une liste : \texttt{l\ =\ {[}1,2,3,4{]}}, si on donne comme
+argument \texttt{*l}, alors on aura comme argument \texttt{1,2,3,4} et
+donc c'est la liste sans les corchets donc 5 éléments
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{78}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{l} \PY{o}{=} \PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{,}\PY{l+m+mi}{4}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{]}
+
+\PY{k}{def} \PY{n+nf}{toto}\PY{p}{(}\PY{o}{*}\PY{n}{args}\PY{p}{,} \PY{o}{*}\PY{o}{*}\PY{n}{kwargs}\PY{p}{)} \PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Args}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{args}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Kwargs}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{kwargs}\PY{p}{)}
+
+\PY{n}{l}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{78}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+[1, 2, 3, 4, 5]
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{80}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{toto}\PY{p}{(}\PY{o}{*}\PY{n}{l}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{salut}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+m+mi}{4}\PY{p}{,} \PY{o}{*}\PY{n}{l}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Args (1, 2, 3, 4, 5, 'salut', 4, 1, 2, 3, 4, 5)
+Kwargs \{\}
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{81}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{toto}\PY{p}{(}\PY{o}{*}\PY{n}{l}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{salut}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+m+mi}{4}\PY{p}{,} \PY{o}{*}\PY{n}{l}\PY{p}{,} \PY{n}{a}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{,} \PY{n}{b}\PY{o}{=}\PY{l+m+mi}{2}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Args (1, 2, 3, 4, 5, 'salut', 4, 1, 2, 3, 4, 5)
+Kwargs \{'a': 1, 'b': 2\}
+    \end{Verbatim}
+
+    \hypertarget{yield-return}{%
+\section{Yield return}\label{yield-return}}
+
+Le \texttt{yield} permet de retourner une valeur et de mettre la
+fonction en pause. Lorsque la fonction est appelée à nouveau, elle
+reprend là où elle s'était arrêtée.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{69}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{foo}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+    \PY{n}{i} \PY{o}{=} \PY{l+m+mi}{0}
+    \PY{k}{while} \PY{k+kc}{True} \PY{p}{:}
+        \PY{n}{i} \PY{o}{+}\PY{o}{=} \PY{l+m+mi}{1}
+        \PY{k}{yield} \PY{n}{i}
+
+\PY{n}{foo}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{69}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+<generator object foo at 0x7ffb84050580>
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{71}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nb}{next}\PY{p}{(}\PY{n}{foo}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{71}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+1
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{73}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nb}{next}\PY{p}{(}\PY{n}{foo}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{73}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+1
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{74}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{g} \PY{o}{=} \PY{n}{foo}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{75}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nb}{next}\PY{p}{(}\PY{n}{g}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{75}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+1
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \hypertarget{named-tuple}{%
+\section{Named Tuple}\label{named-tuple}}
+
+Les \texttt{namedtuple} sont des tuples qui ont des noms. Ils sont donc
+plus faciles à utiliser que les tuples classiques.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{87}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{from} \PY{n+nn}{collections} \PY{k+kn}{import} \PY{n}{namedtuple}
+
+\PY{n}{Type} \PY{o}{=} \PY{n}{namedtuple}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{TypeName}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{field1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{field2}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{)}
+\PY{n}{t} \PY{o}{=} \PY{n}{Type}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{a}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{b}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{t}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{87}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+'a'
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{85}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{t}\PY{o}{.}\PY{n}{field1}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{85}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+'a'
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \hypertarget{numpy}{%
+\section{Numpy}\label{numpy}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{97}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+\PY{n}{a} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{arange}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{6}\PY{p}{)} \PY{c+c1}{\PYZsh{} [1,2,3,4,5]}
+\PY{n}{b} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{ones}\PY{p}{(}\PY{l+m+mi}{5}\PY{p}{)} \PY{c+c1}{\PYZsh{} [1,1,1,1,1]}
+
+\PY{n}{a2} \PY{o}{=} \PY{n}{a}\PY{p}{[}\PY{p}{:}\PY{p}{,} \PY{k+kc}{None}\PY{p}{]}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Column vector :}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{n}{a2}\PY{p}{)}
+\PY{n}{broadcasted} \PY{o}{=} \PY{n}{a2} \PY{o}{*} \PY{n}{b} 
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Broadcasted :}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{n}{broadcasted}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Column vector :
+ [[1]
+ [2]
+ [3]
+ [4]
+ [5]]
+Broadcasted :
+ [[1. 1. 1. 1. 1.]
+ [2. 2. 2. 2. 2.]
+ [3. 3. 3. 3. 3.]
+ [4. 4. 4. 4. 4.]
+ [5. 5. 5. 5. 5.]]
+    \end{Verbatim}
+
+    \hypertarget{software-design-principles}{%
+\section{Software Design Principles}\label{software-design-principles}}
+
+Un principe de conception est une règle gnérale qui guide le
+développement d'un logiciel. Il est souvent exprimé sous forme de
+phrase, et peut être utilisé pour évaluer la qualité d'un logiciel.
+
+\begin{itemize}
+\tightlist
+\item
+  {[}x{]} SSOT
+\item
+  {[}x{]} SOLID
+\item
+  {[}x{]} KISS
+\item
+  {[}x{]} DRY/WET
+\item
+  {[}x{]} YAGNI
+\end{itemize}
+
+\hypertarget{ssot-single-source-of-truth}{%
+\subsection{SSOT (Single Source of
+Truth)}\label{ssot-single-source-of-truth}}
+
+La règle du SSOT s'applique aux données et pas à la redondance du code.
+Elle stipule que les données doivent être stockées dans un seul endroit.
+Si une donnée doit être modifiée, elle doit être modifiée dans un seul
+endroit.
+
+Mauvais exemple :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{equipageDes42MillesEtUneNuits }\OperatorTok{=}\NormalTok{ \{}
+\StringTok{"capitaine"}\NormalTok{ : }\DecValTok{42}\NormalTok{, }\CommentTok{# Le capitaine a 42 ans}
+\StringTok{"moussailon"}\NormalTok{ : }\DecValTok{42}\NormalTok{,}
+\StringTok{"machininiste"}\NormalTok{ : }\DecValTok{42}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+Bon exemple :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ageEquipage }\OperatorTok{=} \DecValTok{42}
+
+\NormalTok{equipageDes42MillesEtUneNuits }\OperatorTok{=}\NormalTok{ \{}
+\StringTok{"capitaine"}\NormalTok{ : ageEquipage,}\CommentTok{# Le capitaine a un certain age}
+\StringTok{"moussailon"}\NormalTok{ : ageEquipage,}
+\StringTok{"machininiste"}\NormalTok{ : ageEquipage}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{dry-dont-repeat-yourself}{%
+\subsubsection{DRY (Don't Repeat
+Yourself)}\label{dry-dont-repeat-yourself}}
+
+Le contraire est le WET (Write Everything Twice).
+
+Exemple de code WET :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{def}\NormalTok{ calculerSomme(liste):}
+\NormalTok{    somme }\OperatorTok{=} \DecValTok{0}
+    \ControlFlowTok{for}\NormalTok{ element }\KeywordTok{in}\NormalTok{ liste:}
+\NormalTok{        somme }\OperatorTok{+=}\NormalTok{ element}
+    \ControlFlowTok{return}\NormalTok{ somme}
+
+\NormalTok{sommePommes }\OperatorTok{=}\NormalTok{ calculerSomme(liste[pommes])}
+\NormalTok{sommePoires }\OperatorTok{=}\NormalTok{ calculerSomme(liste[poires])}
+\NormalTok{sommeBananes }\OperatorTok{=}\NormalTok{ calculerSomme(liste[bananes])}
+\end{Highlighting}
+\end{Shaded}
+
+Une meilleure solution :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{sommes }\OperatorTok{=}\NormalTok{ \{\}}
+\ControlFlowTok{for}\NormalTok{ key, values }\KeywordTok{in}\NormalTok{ liste.items():}
+\NormalTok{    sommes[key] }\OperatorTok{=}\NormalTok{ calculerSomme(values)}
+\end{Highlighting}
+\end{Shaded}
+
+Et avec une compréhension :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{sommes }\OperatorTok{=}\NormalTok{ \{key: calculerSomme(values) }\ControlFlowTok{for}\NormalTok{ key, values }\KeywordTok{in}\NormalTok{ liste.items()\}}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{kiss-keep-it-simple-stupid}{%
+\subsubsection{KISS (Keep It Simple,
+Stupid)}\label{kiss-keep-it-simple-stupid}}
+
+Une fonction ça devrait entre 10 lignes et un écran. Si c'est plus
+compliqué, c'est qu'il y a un problème.
+
+\hypertarget{yagni-you-aint-gonna-need-it}{%
+\subsubsection{YAGNI (You Ain't Gonna Need
+It)}\label{yagni-you-aint-gonna-need-it}}
+
+Ne pas coder des fonctionnalités qui ne sont pas nécessaires. C'est une
+bonne règle pour éviter de coder des fonctionnalités qui ne seront
+jamais utilisées.
+
+Par exemple le gars qui a construit le moteur d'avion sur l'image
+ci-dessous n'a pas suivi cette règle. Il a installé une selle dessus
+parce qu'il se disait que ça pourrait être utile un jour, mais ca n'a
+jamais été utilisé :
+
+\begin{figure}
+\centering
+\includegraphics{https://res.cloudinary.com/practicaldev/image/fetch/s--u53Aunfr--/c_limit\%2Cf_auto\%2Cfl_progressive\%2Cq_auto\%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/tq3ggyimlj9h32ektgrx.png}
+\caption{YAGNI}
+\end{figure}
+
+\hypertarget{solid}{%
+\subsubsection{SOLID}\label{solid}}
+
+On va pas encore parler de ca c'est un peu tôt pour ceux qui n'ont pas
+eu POO
+
+\hypertarget{pipenv}{%
+\section{Pipenv}\label{pipenv}}
+
+C'est pour avoir une sorte de bac à sable ou l'on peut installer des
+packages python sans les installer globalement sur son ordinateur.
+
+\hypertarget{cruxe9ation-dun-environnement-virtuel}{%
+\subsection{Création d'un environnement
+virtuel}\label{cruxe9ation-dun-environnement-virtuel}}
+
+\textbf{Pour créer un enivronnement on utilise la commande :
+\texttt{python3\ -mvenv\ venv}}
+
+Exemple :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{➜  }\ExtensionTok{projet}\NormalTok{ git:(master) ✗ }\ExtensionTok{python3}\NormalTok{ -mvenv venv}
+\NormalTok{➜  }\ExtensionTok{projet}\NormalTok{ git:(master) ✗ }\FunctionTok{ls}\NormalTok{ -a}
+\BuiltInTok{.}  \ExtensionTok{..}\NormalTok{  __init__.py  __main__.py  venv}
+\NormalTok{➜  }\ExtensionTok{projet}\NormalTok{ git:(master) ✗ }\FunctionTok{ls}\NormalTok{ -la}
+\ExtensionTok{total}\NormalTok{ 0}
+\ExtensionTok{drwxrwxrwx}\NormalTok{ 1 arnaud-maillard1 arnaud-maillard1 4096 Apr 18 11:15 .}
+\ExtensionTok{drwxrwxrwx}\NormalTok{ 1 arnaud-maillard1 arnaud-maillard1 4096 Apr 18 11:04 ..}
+\ExtensionTok{-rwxrwxrwx}\NormalTok{ 1 arnaud-maillard1 arnaud-maillard1   44 Apr 18 11:06 __init__.py}
+\ExtensionTok{-rwxrwxrwx}\NormalTok{ 1 arnaud-maillard1 arnaud-maillard1   35 Apr 18 11:08 __main__.py}
+\ExtensionTok{drwxrwxrwx}\NormalTok{ 1 arnaud-maillard1 arnaud-maillard1 4096 Apr 18 11:19 venv}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{activation-de-lenvironnement-virtuel}{%
+\subsection{Activation de l'environnement
+virtuel}\label{activation-de-lenvironnement-virtuel}}
+
+\textbf{Pour activer l'environnement virtuel on utilise la commande :
+\texttt{source\ venv/bin/activate}}
+
+Exemple :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{➜  }\ExtensionTok{projet}\NormalTok{ git:(master) ✗ }\BuiltInTok{source}\NormalTok{ venv/bin/activate}
+\KeywordTok{(}\ExtensionTok{venv}\KeywordTok{)}\NormalTok{ ➜  }\ExtensionTok{projet}\NormalTok{ git:(master) ✗ }\FunctionTok{which}\NormalTok{ python3}
+\ExtensionTok{/mnt/c/Users/arnau/OneDrive/Documents/HEIGVD/Semestre_6/Python/diary_perso_python/8/projet/venv/bin/python3}
+\KeywordTok{(}\ExtensionTok{venv}\KeywordTok{)}\NormalTok{ ➜  }\ExtensionTok{projet}\NormalTok{ git:(master) ✗ }\ExtensionTok{deactivate}
+\NormalTok{➜  }\ExtensionTok{projet}\NormalTok{ git:(master) ✗ }\FunctionTok{which}\NormalTok{ python3}
+\ExtensionTok{/usr/bin/python3}
+\NormalTok{➜  }\ExtensionTok{projet}\NormalTok{ git:(master) ✗}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{installation-de-packages}{%
+\subsection{Installation de packages}\label{installation-de-packages}}
+
+\textbf{Pour installer un package on utilise la commande :
+\texttt{pip\ install\ \textless{}package\textgreater{}} lorsqu'on a déjà
+activé l'environnement}
+
+Exemple :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{(}\ExtensionTok{venv}\KeywordTok{)}\NormalTok{ ➜  }\ExtensionTok{projet}\NormalTok{ git:(master) ✗ }\ExtensionTok{pip}\NormalTok{ install autopep8}
+\ExtensionTok{Collecting}\NormalTok{ autopep8}
+  \ExtensionTok{Downloading}\NormalTok{ autopep8-2.0.2-py2.py3-none-any.whl (45 kB)}
+     \KeywordTok{|}\NormalTok{████████████████████████████████}\KeywordTok{|} \ExtensionTok{45}\NormalTok{ kB 944 kB/s}
+\ExtensionTok{Collecting}\NormalTok{ pycodestyle}\OperatorTok{>}\NormalTok{=2.10.0}
+  \ExtensionTok{Using}\NormalTok{ cached pycodestyle-2.10.0-py2.py3-none-any.whl (41 kB)}
+\ExtensionTok{Collecting}\NormalTok{ tomli}\KeywordTok{;} \ExtensionTok{python_version} \OperatorTok{<} \StringTok{"3.11"}
+  \ExtensionTok{Using}\NormalTok{ cached tomli-2.0.1-py3-none-any.whl (12 kB)}
+\ExtensionTok{Installing}\NormalTok{ collected packages: pycodestyle, tomli, autopep8}
+\ExtensionTok{Successfully}\NormalTok{ installed autopep8-2.0.2 pycodestyle-2.10.0 tomli-2.0.1}
+\KeywordTok{(}\ExtensionTok{venv}\KeywordTok{)}\NormalTok{ ➜  }\ExtensionTok{projet}\NormalTok{ git:(master) ✗ }\ExtensionTok{pip}\NormalTok{ list}
+\ExtensionTok{Package}\NormalTok{       Version}
+\ExtensionTok{-------------}\NormalTok{ -------}
+\ExtensionTok{autopep8}\NormalTok{      2.0.2}
+\ExtensionTok{numpy}\NormalTok{         1.24.2}
+\ExtensionTok{pip}\NormalTok{           20.0.2}
+\ExtensionTok{pkg-resources}\NormalTok{ 0.0.0}
+\ExtensionTok{pycodestyle}\NormalTok{   2.10.0}
+\ExtensionTok{scipy}\NormalTok{         1.10.1}
+\ExtensionTok{setuptools}\NormalTok{    44.0.0}
+\ExtensionTok{tomli}\NormalTok{         2.0.1}
+\KeywordTok{(}\ExtensionTok{venv}\KeywordTok{)}\NormalTok{ ➜  }\ExtensionTok{projet}\NormalTok{ git:(master) ✗}
+\end{Highlighting}
+\end{Shaded}
+
+    \hypertarget{pint}{%
+\section{Pint}\label{pint}}
+
+C'est une librairie python qui permet de faire des conversions de
+unités. Par exemple :
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{98}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{from} \PY{n+nn}{pint} \PY{k+kn}{import} \PY{n}{UnitRegistry}
+\PY{n}{ureg} \PY{o}{=} \PY{n}{UnitRegistry}\PY{p}{(}\PY{p}{)}
+\PY{n}{distance} \PY{o}{=} \PY{l+m+mi}{10} \PY{o}{*} \PY{n}{ureg}\PY{o}{.}\PY{n}{kilometer}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{distance}\PY{o}{.}\PY{n}{to}\PY{p}{(}\PY{n}{ureg}\PY{o}{.}\PY{n}{meter}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+10000.0 meter
+    \end{Verbatim}
+
+    \hypertarget{debugger-python}{%
+\section{Debugger python}\label{debugger-python}}
+
+On a une erreur dans notre code et on aimerait debugger :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{(}\ExtensionTok{venv}\KeywordTok{)}\NormalTok{ ➜  }\ExtensionTok{projet}\NormalTok{ git:(master) ✗ }\ExtensionTok{python3}\NormalTok{ -mhello}
+\ExtensionTok{Hello}\NormalTok{ world !}
+\ExtensionTok{Traceback}\NormalTok{ (most recent call last)}\BuiltInTok{:}
+  \ExtensionTok{File} \StringTok{"/usr/lib/python3.8/runpy.py"}\NormalTok{, line 194, in _run_module_as_main}
+    \BuiltInTok{return}\NormalTok{ _run_code(code, main_globals, None,}
+  \ExtensionTok{File} \StringTok{"/usr/lib/python3.8/runpy.py"}\NormalTok{, line 87, in _run_code}
+    \BuiltInTok{exec}\NormalTok{(code, run_globals)}
+  \ExtensionTok{File} \StringTok{"/mnt/c/Users/arnau/OneDrive/Documents/HEIGVD/Semestre_6/Python/diary_perso_python/8/projet/hello/__main__.py"}\NormalTok{, line 3, in }\OperatorTok{<}\NormalTok{module}\OperatorTok{>}
+    \FunctionTok{sayHello()}
+  \ExtensionTok{File} \StringTok{"/mnt/c/Users/arnau/OneDrive/Documents/HEIGVD/Semestre_6/Python/diary_perso_python/8/projet/hello/__init__.py"}\NormalTok{, line 7, in sayHello}
+    \ExtensionTok{i}\NormalTok{ = i/0}
+\ExtensionTok{ZeroDivisionError}\NormalTok{: division by zero}
+\KeywordTok{(}\ExtensionTok{venv}\KeywordTok{)}\NormalTok{ ➜  }\ExtensionTok{projet}\NormalTok{ git:(master) ✗ }\ExtensionTok{ipython}
+\ExtensionTok{/home/arnaud-maillard1/.local/lib/python3.8/site-packages/IPython/core}\NormalTok{/interactiveshell.py:}\ExtensionTok{882}\NormalTok{: UserWarning: Attempting to work in a virtualenv. If you encounter problems, please install IPython inside the virtualenv.}
+  \ExtensionTok{warn}\NormalTok{(}
+\ExtensionTok{Python}\NormalTok{ 3.8.10 (default, Mar 13 2023, 10:26:41)}
+\ExtensionTok{Type} \StringTok{'copyright'}\NormalTok{, }\StringTok{'credits'}\NormalTok{ or }\StringTok{'license'}\NormalTok{ for more information}
+\ExtensionTok{IPython}\NormalTok{ 8.6.0 -- An enhanced Interactive Python. Type }\StringTok{'?'}\NormalTok{ for help.}
+
+\ExtensionTok{In}\NormalTok{ [1]: import hello}
+
+\ExtensionTok{In}\NormalTok{ [2]: hello.sayHello}
+\ExtensionTok{Out}\NormalTok{[2]: }\OperatorTok{<}\NormalTok{function hello.sayHello()}\OperatorTok{>}
+
+\ExtensionTok{In}\NormalTok{ [3]: hello.sayHello()}
+\ExtensionTok{Hello}\NormalTok{ world !}
+\ExtensionTok{---------------------------------------------------------------------------}
+\ExtensionTok{ZeroDivisionError}\NormalTok{                         Traceback (most recent call last)}
+\ExtensionTok{Cell}\NormalTok{ In [3], line 1}
+\ExtensionTok{----}\OperatorTok{>}\NormalTok{ 1 hello.sayHello()}
+
+\ExtensionTok{File}\NormalTok{ /mnt/c/Users/arnau/OneDrive/Documents/HEIGVD/Semestre_6/Python/diary_perso_python/8/projet/hello/__init__.py:7, in sayHello()}
+      \ExtensionTok{5}\NormalTok{ i = i+1}
+      \ExtensionTok{6}\NormalTok{ i = i*10}
+\ExtensionTok{----}\OperatorTok{>}\NormalTok{ 7 i = i/0}
+
+\ExtensionTok{ZeroDivisionError}\NormalTok{: division by zero}
+
+\ExtensionTok{In}\NormalTok{ [4]: %debug}
+\OperatorTok{>} \ExtensionTok{/mnt/c/Users/arnau/OneDrive/Documents/HEIGVD/Semestre_6/Python/diary_perso_python/8/projet/hello}\NormalTok{/}\ExtensionTok{__init__.py}\NormalTok{(7)}\FunctionTok{sayHello()}
+      \ExtensionTok{3}\NormalTok{     print(}\StringTok{"Hello world !"}\NormalTok{)}
+      \ExtensionTok{4}\NormalTok{     i = 3}
+      \ExtensionTok{5}\NormalTok{     i = i+1}
+      \ExtensionTok{6}\NormalTok{     i = i*10}
+\ExtensionTok{----}\OperatorTok{>}\NormalTok{ 7     i = i/0}
+
+\ExtensionTok{ipdb}\OperatorTok{>}\NormalTok{ u}
+\OperatorTok{>} \OperatorTok{<}\ExtensionTok{ipython-input-3-42affdb2d76d}\OperatorTok{>(}\ExtensionTok{1}\OperatorTok{)<}\NormalTok{module}\OperatorTok{>()}
+\ExtensionTok{----}\OperatorTok{>}\NormalTok{ 1 hello.sayHello()}
+
+\ExtensionTok{ipdb}\OperatorTok{>}\NormalTok{ d}
+\OperatorTok{>} \ExtensionTok{/mnt/c/Users/arnau/OneDrive/Documents/HEIGVD/Semestre_6/Python/diary_perso_python/8/projet/hello}\NormalTok{/}\ExtensionTok{__init__.py}\NormalTok{(7)}\FunctionTok{sayHello()}
+      \ExtensionTok{3}\NormalTok{     print(}\StringTok{"Hello world !"}\NormalTok{)}
+      \ExtensionTok{4}\NormalTok{     i = 3}
+      \ExtensionTok{5}\NormalTok{     i = i+1}
+      \ExtensionTok{6}\NormalTok{     i = i*10}
+\ExtensionTok{----}\OperatorTok{>}\NormalTok{ 7     i = i/0}
+\end{Highlighting}
+\end{Shaded}
+
+On peut naviguer dans le debug avec les commandes suivantes :
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{u} pour remonter dans le code
+\item
+  \texttt{d} pour descendre dans le code
+\item
+  \texttt{n} pour aller à la ligne suivante
+\item
+  \texttt{c} pour continuer l'exécution du code
+\item
+  \texttt{q} pour quitter le debug
+\item
+  \texttt{h} pour afficher l'aide
+\end{itemize}
+
+On peut même faire des commandes python dans le debug :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ExtensionTok{In}\NormalTok{ [5]: %debug}
+\OperatorTok{>} \ExtensionTok{/mnt/c/Users/arnau/OneDrive/Documents/HEIGVD/Semestre_6/Python/diary_perso_python/8/projet/hello}\NormalTok{/}\ExtensionTok{__init__.py}\NormalTok{(7)}\FunctionTok{sayHello()}
+      \ExtensionTok{3}\NormalTok{     print(}\StringTok{"Hello world !"}\NormalTok{)}
+      \ExtensionTok{4}\NormalTok{     i = 3}
+      \ExtensionTok{5}\NormalTok{     i = i+1}
+      \ExtensionTok{6}\NormalTok{     i = i*10}
+\ExtensionTok{----}\OperatorTok{>}\NormalTok{ 7     i = i/0}
+\ExtensionTok{ipdb}\OperatorTok{>}\NormalTok{ print(i)}
+\ExtensionTok{40}
+\ExtensionTok{ipdb}\OperatorTok{>}\NormalTok{ i = 50}
+\ExtensionTok{ipdb}\OperatorTok{>}\NormalTok{ print(i)}
+\ExtensionTok{50}
+\ExtensionTok{ipdb}\OperatorTok{>}
+\end{Highlighting}
+\end{Shaded}
+
+    \hypertarget{pandas}{%
+\section{Pandas}\label{pandas}}
+
+C'est une librairie python qui permet de faire des manipulations de
+données. Un tutoriel est disponible :
+\href{https://pandas.pydata.org/docs/user_guide/10min.html}{LIEN DU
+TUTORIEL}
+
+\hypertarget{itertools}{%
+\section{Itertools}\label{itertools}}
+
+Fonctions pour créer des itérateurs efficaces.
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{product} : produit cartésien
+\item
+  \texttt{permutations} : permutations
+\item
+  \texttt{combinations} : combinaisons
+\item
+  \texttt{combinations\_with\_replacement} : combinaisons avec
+  remplacement
+\end{itemize}
+
+\hypertarget{functools}{%
+\section{Functools}\label{functools}}
+
+Pour calculer le n-ième nombre de Fibonacci, on peut utiliser la formule
+suivante :
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{time}
+
+
+\PY{k}{def} \PY{n+nf}{fib}\PY{p}{(}\PY{n}{n}\PY{p}{)}\PY{p}{:}
+    \PY{k}{if} \PY{n}{n} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{l+m+mi}{2} \PY{p}{:} \PY{k}{return} \PY{l+m+mi}{1}
+    \PY{k}{return} \PY{n}{fib}\PY{p}{(}\PY{n}{n}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)} \PY{o}{+} \PY{n}{fib}\PY{p}{(}\PY{n}{n}\PY{o}{\PYZhy{}}\PY{l+m+mi}{2}\PY{p}{)}
+
+
+\PY{n}{st} \PY{o}{=} \PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)}
+
+
+\PY{n}{fib}\PY{p}{(}\PY{l+m+mi}{20}\PY{p}{)}
+
+
+\PY{n}{et} \PY{o}{=} \PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)}
+\PY{n}{elapsed\PYZus{}time} \PY{o}{=} \PY{n}{et} \PY{o}{\PYZhy{}} \PY{n}{st}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Execution time:}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{elapsed\PYZus{}time}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{seconds}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Execution time: 0.0019948482513427734 seconds
+    \end{Verbatim}
+
+    Ce qui nous donne un algorithme récursif pas très efficace qui
+recalculera plusieurs fois les mêmes valeurs.
+
+On peut améliorer avec un cache créé à la volée :
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{8}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{fib}\PY{p}{(}\PY{n}{n}\PY{p}{,} \PY{n}{cache}\PY{o}{=}\PY{p}{\PYZob{}}\PY{p}{\PYZcb{}}\PY{p}{)}\PY{p}{:}
+    \PY{k}{if} \PY{n}{n} \PY{o+ow}{in} \PY{n}{cache}\PY{p}{:}
+        \PY{k}{return} \PY{n}{cache}\PY{p}{[}\PY{n}{n}\PY{p}{]}
+    \PY{k}{if} \PY{n}{n} \PY{o}{\PYZlt{}} \PY{l+m+mi}{2}\PY{p}{:}
+        \PY{k}{return} \PY{n}{n}
+    \PY{n}{cache}\PY{p}{[}\PY{n}{n}\PY{p}{]} \PY{o}{=} \PY{n}{fib}\PY{p}{(}\PY{n}{n}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)} \PY{o}{+} \PY{n}{fib}\PY{p}{(}\PY{n}{n}\PY{o}{\PYZhy{}}\PY{l+m+mi}{2}\PY{p}{)}
+    \PY{k}{return} \PY{n}{cache}\PY{p}{[}\PY{n}{n}\PY{p}{]}
+
+\PY{n}{st} \PY{o}{=} \PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)}
+
+
+\PY{n}{fib}\PY{p}{(}\PY{l+m+mi}{20}\PY{p}{)}
+
+
+\PY{n}{et} \PY{o}{=} \PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)}
+\PY{n}{elapsed\PYZus{}time} \PY{o}{=} \PY{n}{et} \PY{o}{\PYZhy{}} \PY{n}{st}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Execution time:}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{elapsed\PYZus{}time}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{seconds}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Execution time: 5.078315734863281e-05 seconds
+    \end{Verbatim}
+
+    Ce qui est déjà mieux, mais on peut faire encore mieux avec le
+décorateur : \texttt{functools.cache} :
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{9}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{functools}
+
+\PY{n+nd}{@functools}\PY{o}{.}\PY{n}{lru\PYZus{}cache}
+\PY{k}{def} \PY{n+nf}{fib}\PY{p}{(}\PY{n}{n}\PY{p}{)}\PY{p}{:}
+    \PY{k}{if} \PY{n}{n} \PY{o}{\PYZlt{}} \PY{l+m+mi}{2}\PY{p}{:}
+        \PY{k}{return} \PY{n}{n}
+    \PY{k}{return} \PY{n}{fib}\PY{p}{(}\PY{n}{n}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)} \PY{o}{+} \PY{n}{fib}\PY{p}{(}\PY{n}{n}\PY{o}{\PYZhy{}}\PY{l+m+mi}{2}\PY{p}{)}
+
+\PY{n}{st} \PY{o}{=} \PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)}
+
+
+\PY{n}{fib}\PY{p}{(}\PY{l+m+mi}{20}\PY{p}{)}
+
+
+\PY{n}{et} \PY{o}{=} \PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)}
+\PY{n}{elapsed\PYZus{}time} \PY{o}{=} \PY{n}{et} \PY{o}{\PYZhy{}} \PY{n}{st}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Execution time:}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{elapsed\PYZus{}time}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{seconds}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Execution time: 9.322166442871094e-05 seconds
+    \end{Verbatim}
+
+    \textbf{La fonction \texttt{lru\_cache} fait donc ce qui s'appelle de la
+\emph{mémoïsation}ou de la programmation dynamique.}
+
+    \hypertarget{heapq}{%
+\section{Heapq}\label{heapq}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{13}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{heapq}
+
+\PY{n}{heap} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+\PY{n}{heapq}\PY{o}{.}\PY{n}{heappush}\PY{p}{(}\PY{n}{heap}\PY{p}{,} \PY{l+m+mi}{42}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Heap 1 :}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{heap}\PY{p}{)}
+\PY{n}{heapq}\PY{o}{.}\PY{n}{heappush}\PY{p}{(}\PY{n}{heap}\PY{p}{,} \PY{l+m+mi}{23}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Heap 2 :}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{heap}\PY{p}{)}
+\PY{n}{heapq}\PY{o}{.}\PY{n}{heappush}\PY{p}{(}\PY{n}{heap}\PY{p}{,} \PY{l+m+mi}{77}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Heap 3 :}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{heap}\PY{p}{)}
+\PY{n}{heapq}\PY{o}{.}\PY{n}{heappush}\PY{p}{(}\PY{n}{heap}\PY{p}{,} \PY{l+m+mi}{25}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Heap 4 :}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{heap}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Heap 1 : [42]
+Heap 2 : [23, 42]
+Heap 3 : [23, 42, 77]
+Heap 4 : [23, 25, 77, 42]
+    \end{Verbatim}
+
+    L'ordre vu comme ceci n'est pas compréhensible, mais si on le voit comme
+\textbf{un arbre binaire}, on comprend mieux :
+
+\begin{verbatim}
+      23
+    /    \
+          42
+        /  \
+       25   77
+\end{verbatim}
+
+Tous les nombre à droite de 23 seront plus grands que 23, et tous les
+nombres à gauche de 23 seront plus petits que 23.
+
+    \hypertarget{flask}{%
+\section{Flask}\label{flask}}
+
+Flask est un framework python pour faire des sites web. Il est très
+simple à utiliser et très léger.
+
+Une exemple avec une arborescence de fichiers comme ceci :
+
+\begin{verbatim}
+|__ replace_flask.py
+|__ market.html
+|__ templates
+    |__ market_template.html
+\end{verbatim}
+
+Et le code de \texttt{replace\_flask.py} :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#!/usr/bin/env python3}
+
+\ImportTok{from}\NormalTok{ flask }\ImportTok{import}\NormalTok{ Flask, render_template}
+
+
+\NormalTok{app }\OperatorTok{=}\NormalTok{ Flask(}\VariableTok{__name__}\NormalTok{)}
+
+
+\NormalTok{articles }\OperatorTok{=}\NormalTok{ [}
+\NormalTok{    \{}\StringTok{'name'}\NormalTok{: }\StringTok{'ballon'}\NormalTok{, }\StringTok{'variantes'}\NormalTok{: [}
+\NormalTok{        \{}\StringTok{'name'}\NormalTok{: }\StringTok{'foot'}\NormalTok{, }\StringTok{'price'}\NormalTok{: }\DecValTok{10}\NormalTok{\}, \{}\StringTok{'name'}\NormalTok{: }\StringTok{'volley'}\NormalTok{, }\StringTok{'price'}\NormalTok{: }\DecValTok{15}\NormalTok{\}]\},}
+\NormalTok{    \{}\StringTok{'name'}\NormalTok{: }\StringTok{'raquette'}\NormalTok{, }\StringTok{'variantes'}\NormalTok{: [}
+\NormalTok{        \{}\StringTok{'name'}\NormalTok{: }\StringTok{'tennis'}\NormalTok{, }\StringTok{'price'}\NormalTok{: }\DecValTok{20}\NormalTok{\}, \{}\StringTok{'name'}\NormalTok{: }\StringTok{'badminton'}\NormalTok{, }\StringTok{'price'}\NormalTok{: }\DecValTok{25}\NormalTok{\}]\},}
+\NormalTok{    \{}\StringTok{'name'}\NormalTok{: }\StringTok{'chaussures'}\NormalTok{, }\StringTok{'variantes'}\NormalTok{: [}
+\NormalTok{        \{}\StringTok{'name'}\NormalTok{: }\StringTok{'rouge'}\NormalTok{, }\StringTok{'price'}\NormalTok{: }\DecValTok{30}\NormalTok{\}, \{}\StringTok{'name'}\NormalTok{: }\StringTok{'bleu'}\NormalTok{, }\StringTok{'price'}\NormalTok{: }\DecValTok{35}\NormalTok{\}, \{}\StringTok{'name'}\NormalTok{: }\StringTok{'vert'}\NormalTok{, }\StringTok{'price'}\NormalTok{: }\DecValTok{40}\NormalTok{\}]\}}
+\NormalTok{]}
+
+\CommentTok{# Render the template}
+\AttributeTok{@app.route}\NormalTok{(}\StringTok{'/'}\NormalTok{)}
+\KeywordTok{def}\NormalTok{ index():}
+    \ControlFlowTok{return}\NormalTok{ render_template(}\StringTok{'market_template.html'}\NormalTok{, marketName}\OperatorTok{=}\StringTok{"Loulou sport"}\NormalTok{, articles}\OperatorTok{=}\NormalTok{articles)}
+
+
+\ControlFlowTok{if} \VariableTok{__name__} \OperatorTok{==} \StringTok{'__main__'}\NormalTok{:}
+\NormalTok{    app.run(debug}\OperatorTok{=}\VariableTok{True}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Et le code de \texttt{market\_template.html} :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{<html>}
+
+\KeywordTok{<head>}
+\KeywordTok{<h1>}\NormalTok{Bienvenue chez \{\{marketName\}\}}\KeywordTok{</h1>}
+\KeywordTok{</head>}
+
+\KeywordTok{<body>}
+
+\NormalTok{Voici les articles disponibles dans notre magasin : }\KeywordTok{<br>}
+
+\KeywordTok{<ul>}
+\NormalTok{\{% for article in articles %\}}
+    \KeywordTok{<li>}\NormalTok{\{\{article.name\}\}}
+        \KeywordTok{<ul>}
+\NormalTok{        \{% for variante in article.variantes%\} }
+            \KeywordTok{<li>}\NormalTok{\{\{variante.name\}\}, prix : \{\{variante.price\}\}}\KeywordTok{</li>}
+\NormalTok{        \{% endfor %\}}
+        \KeywordTok{</ul>}
+    \KeywordTok{</li>}
+\NormalTok{\{% endfor %\}}
+\KeywordTok{</ul>}
+
+\KeywordTok{</body>}
+\KeywordTok{</html>}
+\end{Highlighting}
+\end{Shaded}
+
+Et le \texttt{market.html} :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{<html>}
+
+\KeywordTok{<head>}
+\KeywordTok{<h1>}\NormalTok{Bienvenue chez Loulou Sport}\KeywordTok{</h1>}
+\KeywordTok{</head>}
+
+\KeywordTok{<body>}
+
+\NormalTok{Voici les articles disponibles dans notre magasin : }\KeywordTok{<br>}
+
+\KeywordTok{<ul>}
+    \KeywordTok{<li>}\NormalTok{ballon}
+        \KeywordTok{<ul>}
+            \KeywordTok{<li>}\NormalTok{foot, prix : 10}\KeywordTok{</li>}
+            \KeywordTok{<li>}\NormalTok{volley, prix : 15}\KeywordTok{</li>}
+        \KeywordTok{</ul>}
+    \KeywordTok{</li>}
+
+    \KeywordTok{<li>}\NormalTok{raquette}
+        \KeywordTok{<ul>}
+            \KeywordTok{<li>}\NormalTok{tennis, prix : 20}\KeywordTok{</li>}
+            \KeywordTok{<li>}\NormalTok{badminton, prix : 25}\KeywordTok{</li>}
+        \KeywordTok{</ul>}
+    \KeywordTok{</li>}
+
+    \KeywordTok{<li>}\NormalTok{chaussures}
+        \KeywordTok{<ul>}
+            \KeywordTok{<li>}\NormalTok{rouge, prix : 30}\KeywordTok{</li>}
+            \KeywordTok{<li>}\NormalTok{bleu, prix : 35}\KeywordTok{</li>}
+            \KeywordTok{<li>}\NormalTok{vert, prix : 40}\KeywordTok{</li>}
+        \KeywordTok{</ul>}
+    \KeywordTok{</li>}
+\KeywordTok{</ul>}
+
+\KeywordTok{</body>}
+\KeywordTok{</html>}
+\end{Highlighting}
+\end{Shaded}
+
+On le lance avec la commande \texttt{python3\ replace\_flask.py} et
+ensuite on clique sur le lien qui s'affiche dans le terminal.
+
+On obtient alors le résultat suivant :
+
+\href{https://i.stack.imgur.com/3wLut.png}{\includegraphics{https://i.stack.imgur.com/3wLut.png}}
+
+    \hypertarget{singleton}{%
+\section{Singleton}\label{singleton}}
+
+Le design pattern Singleton permet de créer une classe qui n'a qu'une
+seule instance. C'est un design pattern très utilisé pour les loggers.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{16}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Singleton pattern (single instance of a class)}
+
+\PY{c+c1}{\PYZsh{} Manière 1 (Pas top)}
+\PY{k+kn}{from} \PY{n+nn}{typing} \PY{k+kn}{import} \PY{n}{Any}
+
+
+\PY{k}{class} \PY{n+nc}{Singleton}\PY{p}{(}\PY{n+nb}{object}\PY{p}{)}\PY{p}{:}
+    \PY{n}{\PYZus{}instance} \PY{o}{=} \PY{k+kc}{None}
+
+    \PY{k}{def} \PY{n+nf+fm}{\PYZus{}\PYZus{}new\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{cls}\PY{p}{,} \PY{o}{*}\PY{n}{args}\PY{p}{,} \PY{o}{*}\PY{o}{*}\PY{n}{kwargs}\PY{p}{)}\PY{p}{:}
+        \PY{k}{if} \PY{o+ow}{not} \PY{n+nb+bp}{cls}\PY{o}{.}\PY{n}{\PYZus{}instance}\PY{p}{:}
+            \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Creating instance}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+            \PY{n+nb+bp}{cls}\PY{o}{.}\PY{n}{\PYZus{}instance} \PY{o}{=} \PY{n+nb}{super}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n+nf+fm}{\PYZus{}\PYZus{}new\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{cls}\PY{p}{,} \PY{o}{*}\PY{n}{args}\PY{p}{,} \PY{o}{*}\PY{o}{*}\PY{n}{kwargs}\PY{p}{)}
+        \PY{k}{return} \PY{n+nb+bp}{cls}\PY{o}{.}\PY{n}{\PYZus{}instance}
+
+\PY{c+c1}{\PYZsh{} Manière 2 (Pythonic)}
+\PY{k}{class} \PY{n+nc}{Singleton2}\PY{p}{(}\PY{n+nb}{object}\PY{p}{)}\PY{p}{:}
+    \PY{n}{\PYZus{}instances} \PY{o}{=} \PY{p}{\PYZob{}}\PY{p}{\PYZcb{}}
+
+    \PY{k}{def} \PY{n+nf+fm}{\PYZus{}\PYZus{}call\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{cls}\PY{p}{,} \PY{o}{*}\PY{n}{args}\PY{p}{,} \PY{o}{*}\PY{o}{*}\PY{n}{kwargs}\PY{p}{)}\PY{p}{:}
+        \PY{k}{if} \PY{n+nb+bp}{cls} \PY{o+ow}{not} \PY{o+ow}{in} \PY{n+nb+bp}{cls}\PY{o}{.}\PY{n}{\PYZus{}instances}\PY{p}{:}
+            \PY{n+nb+bp}{cls}\PY{o}{.}\PY{n}{\PYZus{}instances}\PY{p}{[}\PY{n+nb+bp}{cls}\PY{p}{]} \PY{o}{=} \PY{n+nb}{super}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n+nf+fm}{\PYZus{}\PYZus{}call\PYZus{}\PYZus{}}\PY{p}{(}\PY{o}{*}\PY{n}{args}\PY{p}{,} \PY{o}{*}\PY{o}{*}\PY{n}{kwargs}\PY{p}{)}
+        \PY{k}{return} \PY{n+nb+bp}{cls}\PY{o}{.}\PY{n}{\PYZus{}instances}\PY{p}{[}\PY{n+nb+bp}{cls}\PY{p}{]}
+
+
+\PY{k}{class} \PY{n+nc}{Logger}\PY{p}{(}\PY{n+nb}{object}\PY{p}{)}\PY{p}{:}
+    \PY{n}{\PYZus{}\PYZus{}metaclass\PYZus{}\PYZus{}} \PY{o}{=} \PY{n}{Singleton2}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \hypertarget{cruxe9ation-dun-package-uxe0-publiuxe9-sur-pypi}{%
+\section{Création d'un package à publié sur
+PyPi}\label{cruxe9ation-dun-package-uxe0-publiuxe9-sur-pypi}}
+
+\hypertarget{fichier-spuxe9ciaux}{%
+\subsection{Fichier spéciaux}\label{fichier-spuxe9ciaux}}
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{.editorconfig} : pour définir les règles de codage
+\item
+  \texttt{.gitignore} : pour ignorer les fichiers à ne pas mettre sur
+  git
+\item
+  \texttt{README.md} : pour décrire le package
+\item
+  \texttt{setup.py} : fichier utiliser par pip pour qu'il installe le
+  package
+\item
+  \texttt{setup.cfg} : fichier de configuration pour le package
+\item
+  \texttt{pyproject.toml} : fichier de configuration pour le package
+\end{itemize}
+
+\hypertarget{commandes}{%
+\subsection{Commandes}\label{commandes}}
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{pip\ install\ -e\ .} : pour installer le package en mode
+  développement en se trouvant dans le dossier du package
+\end{itemize}
+
+Si une erreur mentionne : \emph{LookupError: setuptools-scm was unable
+to detect version for
+/mnt/c/Users/arnau/OneDrive/Documents/HEIGVD/Semestre\_6/Python/diary\_perso\_python/13/heigvd}
+
+Il faut faire crée un repo git et faire une version avec un tag.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \texttt{git\ init}
+\item
+  \texttt{git\ add\ .}
+\item
+  \texttt{git\ commit\ -m\ "Initial\ commit"}
+\item
+  \texttt{git\ tag\ -a\ 0.0.1}
+\item
+  \texttt{git\ describe} -\textgreater{} doit fonctionner
+\end{enumerate}
+
+    \hypertarget{exceptions}{%
+\section{Exceptions}\label{exceptions}}
+
+Les exceptions en python permettent de simplifier le code
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{22}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{try} \PY{p}{:}
+    \PY{n}{a} \PY{o}{=} \PY{l+m+mi}{12}\PY{o}{/}\PY{l+m+mi}{0}
+\PY{k}{except} \PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Division par 0}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Division par 0
+    \end{Verbatim}
+
+    \hypertarget{exemple-1}{%
+\subsection{Exemple 1}\label{exemple-1}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{23}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{codes} \PY{o}{=} \PY{p}{[}\PY{l+m+mi}{4}\PY{p}{,}\PY{l+m+mi}{8}\PY{p}{,}\PY{l+m+mi}{15}\PY{p}{,}\PY{l+m+mi}{16}\PY{p}{,}\PY{l+m+mi}{23}\PY{p}{,}\PY{l+m+mi}{42}\PY{p}{]}
+
+\PY{k}{def} \PY{n+nf}{get\PYZus{}code}\PY{p}{(}\PY{n}{i}\PY{p}{)} \PY{p}{:}
+    \PY{k}{if} \PY{p}{(}\PY{n}{i} \PY{o}{\PYZgt{}} \PY{n+nb}{len}\PY{p}{(}\PY{n}{codes}\PY{p}{)}\PY{p}{)} \PY{p}{:}
+        \PY{k}{raise} \PY{n+ne}{ValueError}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Mauvais valeur de i}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{k}{return} \PY{n}{codes}\PY{p}{[}\PY{n}{i}\PY{p}{]}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Mais c'est mieux de faire ceci, car aucun test n'est nécessaire :
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{24}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{get\PYZus{}code}\PY{p}{(}\PY{n}{i}\PY{p}{)} \PY{p}{:}
+    \PY{k}{try} \PY{p}{:}
+        \PY{k}{return} \PY{n}{codes}\PY{p}{[}\PY{n}{i}\PY{p}{]}
+    \PY{k}{except} \PY{n+ne}{IndexError} \PY{p}{:}
+        \PY{k}{raise} \PY{n+ne}{ValueError}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Mauvais valeur de i}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \hypertarget{les-duxe9corateurs}{%
+\section{Les décorateurs}\label{les-duxe9corateurs}}
+
+Les décorateurs permettent d'ajouter des fonctionnalités à une fonction
+sans la modifier.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{25}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{my\PYZus{}decorator}\PY{p}{(}\PY{n}{func}\PY{p}{)}\PY{p}{:}
+    \PY{k}{def} \PY{n+nf}{wrapper}\PY{p}{(}\PY{o}{*}\PY{n}{args}\PY{p}{,} \PY{o}{*}\PY{o}{*}\PY{n}{kwargs}\PY{p}{)}\PY{p}{:}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Before}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        \PY{n}{func}\PY{p}{(}\PY{o}{*}\PY{n}{args}\PY{p}{,} \PY{o}{*}\PY{o}{*}\PY{n}{kwargs}\PY{p}{)}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{After}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{k}{return} \PY{n}{wrapper}
+
+\PY{n+nd}{@my\PYZus{}decorator}
+\PY{k}{def} \PY{n+nf}{foo}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Inside}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+\PY{n}{foo}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Before
+Inside
+After
+    \end{Verbatim}
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+\end{document}
